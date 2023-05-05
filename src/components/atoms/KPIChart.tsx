@@ -48,7 +48,7 @@ const data = [
 export default function KPIChart({stroke, dataKey}: any) {
     return (
         <LineChart width={300} height={100} data={data}>
-            <Line type="monotone" dataKey={dataKey} stroke={stroke} strokeWidth={2} />
+            <Line type="monotone" dataKey={dataKey} stroke={stroke} strokeWidth={2} dot={false}/>
         </LineChart>
     );
 }

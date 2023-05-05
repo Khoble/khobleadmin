@@ -1,4 +1,5 @@
 import KPICard from "../organisms/KPICard";
+import { Box } from '@mui/material';
 
 const studentsData = [
     {
@@ -47,9 +48,9 @@ const studentsData = [
 
 export default function KPIs() {
     return (
-        <>
-            <KPICard title={"Students"} stroke={"#8884d8"} dataKey={"pv"}></KPICard>
-            <KPICard title={"Companies"} stroke={"#82ca9d"} dataKey={"uv"}></KPICard>
-        </>
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <KPICard title={"Students"} color={"#8884d8"} dataKey={"pv"} metric={910225}></KPICard>
+            <KPICard title={"Companies"} color={"#82ca9d"} dataKey={"uv"} metric={1002}></KPICard>
+        </Box>
     )
 }
