@@ -8,12 +8,12 @@ function formatAsNumber(value: any) {
     return value.toLocaleString()
 }
 
-export default function KPICard({ title, color, dataKey, metric }: any) {
+export default function MiniKPICard({ title, color, dataKey, metric, detailed }: any) {
     return (
-        <Box sx={{ minWidth: 275 }}>
-            <Card variant="outlined" style={{ borderTop: "2px solid " + color }}>
-                <CardContent style={{background: "linear-gradient(to bottom, "+color+"25"+" -5%, #00000000 80%)"}}>
-                    <KPIChart stroke={color} dataKey={dataKey} />
+        <Box sx={{ minWidth: 275}}> 
+            <Card variant="outlined" sx={{ borderTop: "2px solid " + color }}>
+                <CardContent sx={{background: "linear-gradient(to bottom, " + color + "25" + " -5%, #00000000 80%)" }}>
+                    {detailed && <KPIChart stroke={color} dataKey={dataKey} />}
                     <Typography gutterBottom variant="h6" component="div" color={color}>
                         {formatAsNumber(metric)}
                     </Typography>

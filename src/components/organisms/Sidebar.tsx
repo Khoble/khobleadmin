@@ -16,13 +16,10 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-// KPIs:
-import InsightsIcon from '@mui/icons-material/Insights';
-
-// Industries:
-import WebStoriesIcon from '@mui/icons-material/WebStories';
+import { useLocation, useNavigate } from 'react-router-dom';
+import DataUsageIcon from '@mui/icons-material/DataUsage';
+import BusinessIcon from '@mui/icons-material/Business';
+import SchoolIcon from '@mui/icons-material/School';
 
 const drawerWidth = 240;
 
@@ -95,34 +92,114 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
-export default function Sidebar({ targetTab }: any) {
+export default function Sidebar({ language, renderedContent }: any) {
+    // Hooks:
     const theme = useTheme();
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
+    const { pathname } = useLocation();
 
-    // Language:
-    const [language, setLanguage] = useState("english");
-
-    // Array of sidebar tabs, where each tab is conformed of a label and its corresponding icon
-    const sidebarConfig = [
-        {
-            label: "KPIs",
-            icon: InsightsIcon,
-            navigateTo: "KPIs"
-        },
-        {
-            label:
-                language === "english" ? "Industries" :
-                    language === "español" ? "Industrias" :
-                        "",
-            icon: WebStoriesIcon,
-            navigateTo: "Industries"
-        }
-    ];
-
+    // Constants and variables:
+    
+    // Toggles drawer between close and open states:
     const toggleDrawer = () => {
         setOpen(!open)
     };
+
+    // Used to store and render the sidebar tabs:
+    var listItemArray: JSX.Element[] = [];
+
+    const sidebarConfig = [
+        {
+            icon: DataUsageIcon,
+            drawerLabel:
+                language === "english" ? "General" :
+                    language === "español" ? "Generales" :
+                        "",
+            navigateTo: "KPIs/general"
+        },
+        {
+            icon: BusinessIcon,
+            drawerLabel:
+                language === "english" ? "Companies" :
+                    language === "español" ? "Compañías" :
+                        "",
+            navigateTo: "KPIs/companies"
+        },
+        {
+            icon: SchoolIcon,
+            drawerLabel:
+                language === "english" ? "Students" :
+                    language === "español" ? "Estudiantes" :
+                        "",
+            navigateTo: "KPIs/students"
+        }
+    ]; // Contains the configuration of the sidebar
+
+
+    // Functions:
+    // Used to highlight sidebar tab that corresponds to the current view, and additionally sets the appbar label:
+    function shouldSelect(currentSidebarTab: any) {
+        var tabUrl = currentSidebarTab.navigateTo;
+
+        // Add slash at the beginning of 'tabUrl'
+        tabUrl = '/' + tabUrl;
+
+        return tabUrl === pathname // where 'pathname' is the current browser url
+    }
+
+    // Returns the current tab's label and creates an array that contains the list items that correspond to the sidebar tabs:
+    function getCurrentTabLabel() {
+        var tabLabel = "";
+
+        for (const [index, sidebarTab] of sidebarConfig.entries()) {
+            // Check to see if current tab should be selected:
+            let shouldSelectTab = shouldSelect(sidebarTab);
+            
+            // Create the ListItem (sidebar tab component):
+            let currentListItem =
+                <ListItem
+                    key={index.toString()}
+                    disablePadding
+                    sx={{ display: 'block' }}
+                    aria-label={sidebarTab.drawerLabel}
+                    onClick={() => { navigate("/" + sidebarTab.navigateTo) }}
+                >
+                    <ListItemButton
+                        sx={{
+                            minHeight: 48,
+                            justifyContent: open ? 'initial' : 'center',
+                            px: 2.5
+                        }}
+                        selected={shouldSelectTab}
+                    >
+                        <ListItemIcon
+                            sx={{
+                                minWidth: 0,
+                                mr: open ? 3 : 'auto',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            {<sidebarTab.icon />}
+                        </ListItemIcon>
+                        <ListItemText primary={sidebarTab.drawerLabel} sx={{ opacity: open ? 1 : 0 }} />
+                    </ListItemButton>
+                </ListItem>
+            
+            // Assign the tab label based on language:
+            if (shouldSelectTab) tabLabel = 
+                language === "english" ? 
+                    sidebarTab.drawerLabel + " KPIs" :
+                language === "español" ? 
+                    "KPIs " + sidebarTab.drawerLabel.toLowerCase() :
+                ""
+        
+            // Store the list item:
+            listItemArray.push(currentListItem);
+        }
+
+        return tabLabel;
+    }
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -142,7 +219,7 @@ export default function Sidebar({ targetTab }: any) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap component="div">
-                        {"KPIs"}
+                        {getCurrentTabLabel()}
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -154,14 +231,21 @@ export default function Sidebar({ targetTab }: any) {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    {sidebarConfig.map((sidebarTab: any, index: Number) => (
-                        <ListItem key={sidebarTab.label} disablePadding sx={{ display: 'block' }} aria-label={sidebarTab.label} onClick={() => {navigate("/"+sidebarTab.navigateTo)}}>
+                    {/* {sidebarConfig.map((sidebarTab: any, index: Number) => (
+                        <ListItem
+                            key={index.toString()}
+                            disablePadding
+                            sx={{ display: 'block' }}
+                            aria-label={sidebarTab.drawerLabel}
+                            onClick={() => { navigate("/" + sidebarTab.navigateTo) }}
+                        >
                             <ListItemButton
                                 sx={{
                                     minHeight: 48,
                                     justifyContent: open ? 'initial' : 'center',
-                                    px: 2.5,
+                                    px: 2.5
                                 }}
+                                selected={shouldSelect(sidebarTab)}
                             >
                                 <ListItemIcon
                                     sx={{
@@ -172,12 +256,17 @@ export default function Sidebar({ targetTab }: any) {
                                 >
                                     {<sidebarTab.icon />}
                                 </ListItemIcon>
-                                <ListItemText primary={sidebarTab.label} sx={{ opacity: open ? 1 : 0 }} />
+                                <ListItemText primary={sidebarTab.drawerLabel} sx={{ opacity: open ? 1 : 0 }} />
                             </ListItemButton>
                         </ListItem>
-                    ))}
+                    ))} */}
+                    {listItemArray}
                 </List>
             </Drawer>
+            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                {/* <DrawerHeader /> */}
+                {renderedContent}
+            </Box>
         </Box>
     );
 }

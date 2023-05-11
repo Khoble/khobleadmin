@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 
 const data = [
@@ -43,12 +44,16 @@ const data = [
         pv: 4300,
         amt: 2100,
     },
-];
+]; //todo: api call
 
-export default function KPIChart({stroke, dataKey}: any) {
+export default function KPIChart({ stroke, dataKey }: any) {
     return (
-        <LineChart width={300} height={100} data={data}>
-            <Line type="monotone" dataKey={dataKey} stroke={stroke} strokeWidth={2} dot={false}/>
-        </LineChart>
+        <Box sx={{ height: 80}}>
+            <ResponsiveContainer>
+                <LineChart data={data}>
+                    <Line type="monotone" dataKey={dataKey} stroke={stroke} strokeWidth={1} dot={false} />
+                </LineChart>
+            </ResponsiveContainer>
+        </Box>
     );
 }
