@@ -1,4 +1,4 @@
-import MiniKPICard from "../../organisms/MiniKPICard";
+import KPICard from "../../organisms/KPICard";
 import { Grid } from '@mui/material';
 
 export default function StudentKPIs({language}: any) {
@@ -6,15 +6,15 @@ export default function StudentKPIs({language}: any) {
         <Grid
             container
             spacing={2}
-            direction="row"
-            justifyContent="space-between"
-            alignItems="flex-start"
         >
             <Grid item>
-                <MiniKPICard title={"Student KPI #1"} color={"#fca103"} dataKey={"pv"} metric={910225} detailed/>
+                <KPICard language={language} title={"Student KPI #1"} color={"#82ca9d"} dataKey={"pv"} metric={910225} slope={0} trendChangePercentage={0} detailed/>
             </Grid>
             <Grid item>
-                <MiniKPICard title={"Student KPI #2"} color={"#03fcf8"} dataKey={"uv"} metric={1002} detailed />
+                <KPICard language={language} title={"Student KPI #2"} color={"#d88484"} dataKey={"uv"} metric={1002} slope={1} trendChangePercentage={14.8} detailed />
+            </Grid>
+            <Grid item>
+                <KPICard language={language} title={"Student KPI #3"} color={"#8884d8"} dataKey={"amt"} metric={20913} slope={-1} trendChangePercentage={-3.6} detailed/>
             </Grid>
         </Grid>
     )

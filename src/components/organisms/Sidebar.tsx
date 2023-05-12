@@ -113,25 +113,31 @@ export default function Sidebar({ language, renderedContent }: any) {
         {
             icon: DataUsageIcon,
             drawerLabel:
-                language === "english" ? "General" :
-                    language === "español" ? "Generales" :
-                        "",
+                language === "english" ? 
+                    "General" :
+                language === "español" ? 
+                    "Generales" :
+                "",
             navigateTo: "KPIs/general"
         },
         {
             icon: BusinessIcon,
             drawerLabel:
-                language === "english" ? "Companies" :
-                    language === "español" ? "Compañías" :
-                        "",
+                language === "english" ? 
+                    "Companies" : 
+                language === "español" ? 
+                    "Compañías" :
+                "",
             navigateTo: "KPIs/companies"
         },
         {
             icon: SchoolIcon,
             drawerLabel:
-                language === "english" ? "Students" :
-                    language === "español" ? "Estudiantes" :
-                        "",
+                language === "english" ? 
+                    "Students" :
+                language === "español" ? 
+                    "Estudiantes" :
+                "",
             navigateTo: "KPIs/students"
         }
     ]; // Contains the configuration of the sidebar
@@ -264,7 +270,7 @@ export default function Sidebar({ language, renderedContent }: any) {
                 </List>
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                {/* <DrawerHeader /> */}
+                <DrawerHeader />
                 {renderedContent}
             </Box>
         </Box>
