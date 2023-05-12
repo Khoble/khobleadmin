@@ -2,27 +2,28 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import KhobleChart from '../atoms/KhobleChart';
+import KhobleChart from '../molecules/KhobleChart';
 import NorthEastIcon from '@mui/icons-material/NorthEast';
 import SouthEastIcon from '@mui/icons-material/SouthEast';
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 import { Grid } from '@mui/material';
 
-export default function KPICard({ language, size, chartType, data, title, color, dataKeys, metric, trendChangePercent }: any) {
+export default function KPICard({ language, size, chartType, data, title, color, xDataKey, yDataKeys, metric, trendChangePercent }: any) {
     // Variables and constants:
     // Dynamic components:
     var IconComponent: any; 
     var IconComponentTag: any;
 
     // Colors:
-    var componentColor = ""
+    var componentColor = "";
+    const infoColor = "grey"; // Color of text, chart configuration elements, etc.
 
     // Modify depending on chart type:
     switch (chartType) {
         case "percent":
             // Modify metric:
             metric = null // Null by default
-            let dataKey = dataKeys[0]; // Only 1 data key for percentage chart
+            let dataKey = yDataKeys[0]; // Only 1 data key for percentage chart
             let v1 = data[0][dataKey]; // Extract value from 1st data entry
             let v2 = data[1][dataKey]; // Extract value from 2nd data entry
 
@@ -64,8 +65,10 @@ export default function KPICard({ language, size, chartType, data, title, color,
                             size={size}
                             chartType={chartType}
                             color={color}
-                            dataKeys={dataKeys}
+                            xDataKey={xDataKey}
+                            yDataKeys={yDataKeys}
                             data={data}
+                            configColor={infoColor}
                         />
                     }
                     <Grid
@@ -87,14 +90,14 @@ export default function KPICard({ language, size, chartType, data, title, color,
                                 justifyContent="flex-end"
                                 alignItems="center"
                             >
-                                <Typography variant="body2" color="grey">
+                                <Typography variant="body2" color={infoColor}>
                                     {trendChangePercent + "%"}
                                 </Typography>
                                 {IconComponent}
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Typography variant="body2" color="grey">
+                    <Typography variant="body2" color={infoColor}>
                         {title}
                     </Typography>
                 </CardContent>

@@ -50,81 +50,98 @@ const linearData = [
 const percentData = [
     {
         name: "matches",
-        value: 359 
+        value: 359
     },
     {
         name: "applications",
-        value: 407 
+        value: 407
     }
 ]
 
-export default function GeneralKPIs({language}: any) {
+// Dummy data for the hired KPI:
+const hiredData = [
+    { timestamp: "2023-01-01 00:00:00", hired: 338 },
+    { timestamp: "2023-01-01 12:00:00", hired: 559 },
+    { timestamp: "2023-01-02 00:00:00", hired: 644 },
+    { timestamp: "2023-01-02 12:00:00", hired: 821 },
+    { timestamp: "2023-01-03 00:00:00", hired: 834 },
+    { timestamp: "2023-01-03 12:00:00", hired: 1185 },
+    { timestamp: "2023-01-04 00:00:00", hired: 1300 },
+    { timestamp: "2023-01-04 12:00:00", hired: 1362 },
+    { timestamp: "2023-01-05 00:00:00", hired: 1440 },
+    { timestamp: "2023-01-05 12:00:00", hired: 1536 },
+    { timestamp: "2023-01-06 00:00:00", hired: 1573 },
+    { timestamp: "2023-01-06 12:00:00", hired: 1662 },
+    { timestamp: "2023-01-07 00:00:00", hired: 1736 },
+    { timestamp: "2023-01-07 12:00:00", hired: 1837 },
+    { timestamp: "2023-01-08 00:00:00", hired: 1969 },
+    { timestamp: "2023-01-08 12:00:00", hired: 2019 },
+    { timestamp: "2023-01-09 00:00:00", hired: 2062 },
+    { timestamp: "2023-01-09 12:00:00", hired: 2186 },
+    { timestamp: "2023-01-10 00:00:00", hired: 2208 },
+    { timestamp: "2023-01-10 12:00:00", hired: 2276 },
+    { timestamp: "2023-01-11 00:00:00", hired: 2317 },
+    { timestamp: "2023-01-11 12:00:00", hired: 2389 },
+    { timestamp: "2023-01-12 00:00:00", hired: 2500 },
+    { timestamp: "2023-01-12 12:00:00", hired: 2657 },
+    { timestamp: "2023-01-13 00:00:00", hired: 2733 },
+    { timestamp: "2023-01-13 12:00:00", hired: 2791 },
+    { timestamp: "2023-01-14 00:00:00", hired: 2823 }
+]
+
+// Functions:
+// Get latest value of a data set given a key
+function getLatestValue(data: any, key: any){
+    let object = data[data.length-1];
+    let value = object[key]
+    
+    return value;
+}
+
+export default function GeneralKPIs({ language }: any) {
     return (
         <Grid
             container
             spacing={2}
         >
             <Grid item>
-                <KPICard 
-                    language={language} 
+                <KPICard
+                    language={language}
                     size={'l'}
                     chartType={"percent"}
-                    data={percentData} 
+                    data={percentData}
                     title={
-                        language === "english" ? 
+                        language === "english" ?
                             "Matched " :
-                        language === "español" ? 
-                            "Pareados" :
-                        ""
-                    } 
-                    color={"#d884ce"} 
-                    dataKeys={["value"]}
+                            language === "español" ?
+                                "Pareados" :
+                                ""
+                    }
+                    color={"#d884ce"}
+                    xDataKey={"name"}
+                    yDataKeys={["value"]}
                     trendChangePercent={5.7}
                 />
             </Grid>
             <Grid item>
-                <KPICard 
-                    language={language} 
-                    size={'m'}
+                <KPICard
+                    language={language}
+                    size={'l'}
                     chartType={"line"}
-                    data={linearData} 
+                    data={hiredData}
                     title={
-                        language === "english" ? 
+                        language === "english" ?
                             "Hired " :
-                        language === "español" ? 
-                            "Contratados" :
-                        ""
-                    } 
-                    color={"#d88484"} 
-                    dataKeys={["uv"]} 
-                    metric={1002}  
-                    trendChangePercent={14.8} 
+                            language === "español" ?
+                                "Contratados" :
+                                ""
+                    }
+                    color={"#d88484"}
+                    xDataKey={"timestamp"}
+                    yDataKeys={["hired"]}
+                    metric={getLatestValue(hiredData, "hired")}
+                    trendChangePercent={14.8}
                 />
-            </Grid>
-            <Grid item>
-                <KPICard 
-                    language={language} 
-                    size={'m'} 
-                    chartType={"bar"} 
-                    data={linearData}
-                    title={"General KPI #1"} 
-                    color={"#82ca9d"} 
-                    dataKeys={["pv"]} 
-                    metric={910225} 
-                    trendChangePercent={0} 
-                />
-            </Grid>
-            <Grid item>
-                <KPICard 
-                    language={language} 
-                    size={'m'} 
-                    chartType={"line"}
-                    data={linearData} 
-                    title={"General KPI #3"} 
-                    color={"#8884d8"} 
-                    dataKeys={["amt"]} 
-                    metric={20913}  
-                    trendChangePercent={-3.6}/>
             </Grid>
         </Grid>
     )
