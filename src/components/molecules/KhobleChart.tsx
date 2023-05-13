@@ -22,8 +22,8 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
 
     // Values used to manage changes in the chart brush:
     const [brushStartIndex, setBrushStartIndex] = useState(0);
-    const defaultNumberOfXAxisTicks = 7;
-    const [brushEndIndex, setBrushEndIndex] = useState(defaultNumberOfXAxisTicks - 1); // Brush end-index falls on the last data element of the default range (numerOfDefaultXAxisTcks)
+    const defaultNumberOfXAxisTicks = 12;
+    const [brushEndIndex, setBrushEndIndex] = useState(data.length-1); // Brush end-index falls on the last data element
 
     // Sizing variables:
     var L1ComponentWidth = 275;
@@ -71,8 +71,8 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
             scaleFactor = 3.2;
 
             // Props:
-            L1ComponentProps = {
-                ...L1ComponentProps, ...{
+            L2ComponentProps = {
+                ...L2ComponentProps, ...{
                     ref: componentWidthRef // Add reference to be able to extract it's current width
                 }
             }
@@ -85,6 +85,12 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
                 //     key={"tooltip"}
                 //     cursor={{ fill: configColor }} 
                 // />,
+
+                <CartesianGrid 
+                    key={"cartesianGrid"}
+                    strokeDasharray='3 3'
+                    stroke={configColor+25} // 25% opacity on top
+                />,
 
                 // Add y-axis:
                 <YAxis
@@ -108,8 +114,8 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
                     stroke={color}
                     fill='transparent' // No background
                     tickFormatter={() => ("")} // No text labels on the horizontal ends
-                    startIndex={brushStartIndex}
-                    endIndex={data.length < defaultNumberOfXAxisTicks ? data.length - 1 : brushEndIndex} // Displays a fixed amount of secondary chart components
+                    startIndex={data.length < defaultNumberOfXAxisTicks ? 0 : brushEndIndex-defaultNumberOfXAxisTicks+1}
+                    endIndex={brushEndIndex} // Displays a fixed amount of secondary chart components
                     onChange={(brush) => {
                         // Update brush start and end indices:
                         if (brush.startIndex != undefined && brush.endIndex != undefined) {

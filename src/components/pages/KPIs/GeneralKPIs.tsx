@@ -1,6 +1,17 @@
 import KPICard from "../../organisms/KPICard";
 import { Grid } from '@mui/material';
 
+const colors = {
+    red: "#d88484",
+    orange: "#d89f84",
+    yellow: "#d8d184",
+    green: "#9fd884",
+    turquoise: "#84d8bc",
+    lile: "#8c84d8",
+    magenta: "#d884ce",
+
+}
+
 // Dummy data for x-y charts:
 const linearData = [
     {
@@ -108,25 +119,6 @@ export default function GeneralKPIs({ language }: any) {
                 <KPICard
                     language={language}
                     size={'l'}
-                    chartType={"percent"}
-                    data={percentData}
-                    title={
-                        language === "english" ?
-                            "Matched " :
-                            language === "español" ?
-                                "Pareados" :
-                                ""
-                    }
-                    color={"#d884ce"}
-                    xDataKey={"name"}
-                    yDataKeys={["value"]}
-                    trendChangePercent={5.7}
-                />
-            </Grid>
-            <Grid item>
-                <KPICard
-                    language={language}
-                    size={'l'}
                     chartType={"line"}
                     data={hiredData}
                     title={
@@ -136,11 +128,30 @@ export default function GeneralKPIs({ language }: any) {
                                 "Contratados" :
                                 ""
                     }
-                    color={"#d88484"}
+                    color={colors.red}
                     xDataKey={"timestamp"}
                     yDataKeys={["hired"]}
                     metric={getLatestValue(hiredData, "hired")}
                     trendChangePercent={14.8}
+                />
+            </Grid>
+            <Grid item>
+                <KPICard
+                    language={language}
+                    size={'m'}
+                    chartType={"percent"}
+                    data={percentData}
+                    title={
+                        language === "english" ?
+                            "Matched " :
+                            language === "español" ?
+                                "Pareados" :
+                                ""
+                    }
+                    color={colors.magenta}
+                    xDataKey={"name"}
+                    yDataKeys={["value"]}
+                    trendChangePercent={5.7}
                 />
             </Grid>
         </Grid>

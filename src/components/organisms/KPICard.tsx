@@ -16,7 +16,7 @@ export default function KPICard({ language, size, chartType, data, title, color,
 
     // Colors:
     var componentColor = "";
-    const infoColor = "grey"; // Color of text, chart configuration elements, etc.
+    const infoColor = "#808080"; // Color of text, chart configuration elements, etc.
 
     // Modify depending on chart type:
     switch (chartType) {
