@@ -16,7 +16,7 @@ const theme = createTheme({
 });
 
 // Global language:
-const language = "english"; // todo: api call
+const language = "español"; // todo: api call
 
 // Default route that sidebar will render: 
 const defaultRoute = "/KPIs/general";

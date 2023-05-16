@@ -14,16 +14,16 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
     // Arrays:
     var configurationComponents: JSX.Element[] = []; // Used to store and render all those recharts components that modify the chart configuration
     var L2Components: JSX.Element[] = [] // Used to store and render L2 components
-    var L3Components: JSX.Element[] = []; // 2nd-order child component (pie charts)
+    var L3Components: JSX.Element[] = []; // 2nd-order child component
 
     // Component props:
-    var L1ComponentProps = chartType === "percent" ? {} : { data: data }; // Every L1 component has to have a data property (except pie charts)
+    var L1ComponentProps = chartType === "percent" ? {} : { data: data }; // Every L1 component has to have a data property (except percent charts)
     var L2ComponentProps = {};
 
     // Values used to manage changes in the chart brush:
     const [brushStartIndex, setBrushStartIndex] = useState(0);
     const defaultNumberOfXAxisTicks = 12;
-    const [brushEndIndex, setBrushEndIndex] = useState(data.length-1); // Brush end-index falls on the last data element
+    const [brushEndIndex, setBrushEndIndex] = useState(defaultNumberOfXAxisTicks-1); // Brush end-index falls on the last data element of the default range (numerOfDefaultXAxisTcks)
 
     // Sizing variables:
     var L1ComponentWidth = 275;
@@ -103,7 +103,12 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
                     key={"x-axis"}
                     dataKey={xDataKey}
                     interval={0} // Will not remove x-axis ticks that don't fit
-                tick={<KhobleChartAxisTick textColor={configColor} tickWidth={currentTickWidth}/>}
+                tick={
+                    <KhobleChartAxisTick 
+                        textColor={configColor} 
+                        tickWidth={currentTickWidth}
+                    />
+                }
                 />,
 
                 // Add brush:
@@ -114,8 +119,8 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
                     stroke={color}
                     fill='transparent' // No background
                     tickFormatter={() => ("")} // No text labels on the horizontal ends
-                    startIndex={data.length < defaultNumberOfXAxisTicks ? 0 : brushEndIndex-defaultNumberOfXAxisTicks+1}
-                    endIndex={brushEndIndex} // Displays a fixed amount of secondary chart components
+                    startIndex={brushStartIndex}
+                    endIndex={data.length < defaultNumberOfXAxisTicks ? data.length-1 : brushEndIndex} // Displays a fixed amount of L2 chart components
                     onChange={(brush) => {
                         // Update brush start and end indices:
                         if (brush.startIndex != undefined && brush.endIndex != undefined) {

@@ -118,20 +118,20 @@ export default function GeneralKPIs({ language }: any) {
             <Grid item>
                 <KPICard
                     language={language}
-                    size={'l'}
+                    size={'m'}
                     chartType={"line"}
                     data={hiredData}
-                    title={
-                        language === "english" ?
-                            "Hired " :
-                            language === "español" ?
-                                "Contratados" :
-                                ""
-                    }
                     color={colors.red}
                     xDataKey={"timestamp"}
                     yDataKeys={["hired"]}
                     metric={getLatestValue(hiredData, "hired")}
+                    metricDescription={
+                        language === "english" ?
+                        "currently hired " :
+                        language === "español" ?
+                            "contratados actualmente" :
+                            ""
+                    }
                     trendChangePercent={14.8}
                 />
             </Grid>
@@ -141,17 +141,18 @@ export default function GeneralKPIs({ language }: any) {
                     size={'m'}
                     chartType={"percent"}
                     data={percentData}
-                    title={
-                        language === "english" ?
-                            "Matched " :
-                            language === "español" ?
-                                "Pareados" :
-                                ""
-                    }
                     color={colors.magenta}
                     xDataKey={"name"}
                     yDataKeys={["value"]}
                     trendChangePercent={5.7}
+                    metricDescription={
+                        language === "english" ?
+                            "matched" :
+                            language === "español" ?
+                                "pareados" :
+                                ""
+                    }
+                    fixed
                 />
             </Grid>
         </Grid>

@@ -1363,17 +1363,17 @@ export default function CompanyKPIs({ language }: any) {
                     size={'m'}
                     chartType={"line"}
                     data={usersOverTimeData}
-                    title={
-                        language === "english" ?
-                            "Current Users" :
-                            language === "español" ?
-                                "Usuarios actuales" :
-                                ""
-                    }
                     color={colors.turquoise}
                     xDataKey={"timestamp"}
                     yDataKeys={["users"]}
                     metric={getLatestValue(usersOverTimeData, "users")}
+                    metricDescription={
+                        language === "english" ?
+                        "current users" :
+                        language === "español" ?
+                            "usuarios actuales" :
+                            ""
+                    }
                     trendChangePercent={0}
                 />
             </Grid>
@@ -1383,18 +1383,18 @@ export default function CompanyKPIs({ language }: any) {
                     size={'l'}
                     chartType={"bar"}
                     data={companiesUnderIndustryData}
-                    title={
-                        language === "english" ?
-                            "Total Companies" :
-                            language === "español" ?
-                                "Compañías totales" :
-                                ""
-                    }
                     color={colors.orange}
                     xDataKey={"industry"}
                     yDataKeys={["companies"]}
-                    metric={getSumOfValues(companiesUnderIndustryData, "companies")}
+                    title={
+                        language === "english" ?
+                            "Companies by Industry" :
+                            language === "español" ?
+                                "Compañías por industria" :
+                                ""
+                    }
                     trendChangePercent={2.4}
+                    fixed
                 />
             </Grid>
             <Grid item>
@@ -1403,18 +1403,18 @@ export default function CompanyKPIs({ language }: any) {
                     size={'l'}
                     chartType={"bar"}
                     data={publishedIndustriesData}
-                    title={
-                        language === "english" ?
-                            "Total Publications" :
-                            language === "español" ?
-                                "Publicaciones totales" :
-                                ""
-                    }
                     color={colors.yellow}
                     xDataKey={"industry"}
                     yDataKeys={["publications"]}
-                    metric={getSumOfValues(publishedIndustriesData, "publications")}
+                    title={
+                        language === "english" ?
+                            "Publications by Industry" :
+                            language === "español" ?
+                                "Publicaciones por industria" :
+                                ""
+                    }
                     trendChangePercent={-4}
+                    fixed
                 />
             </Grid>
             <Grid item>
@@ -1423,18 +1423,18 @@ export default function CompanyKPIs({ language }: any) {
                     size={'m'}
                     chartType={"line"}
                     data={publicationsOverTimeData}
-                    title={
-                        language === "english" ?
-                            "Current Publications" :
-                            language === "español" ?
-                                "Publicaciones actuales" :
-                                ""
-                    }
                     color={colors.green}
                     xDataKey={"timestamp"}
                     yDataKeys={["publications"]}
                     metric={getLatestValue(publicationsOverTimeData, "publications")}
                     trendChangePercent={11.9}
+                    metricDescription={
+                        language === "english" ?
+                        "current publications" :
+                        language === "español" ?
+                            "publicaciones actuales" :
+                            ""
+                    }
                 />
             </Grid>
         </Grid>

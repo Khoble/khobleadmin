@@ -6,19 +6,60 @@ import KhobleChart from '../molecules/KhobleChart';
 import NorthEastIcon from '@mui/icons-material/NorthEast';
 import SouthEastIcon from '@mui/icons-material/SouthEast';
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
-import { Grid } from '@mui/material';
+import { CardActions, Grid, IconButton } from '@mui/material';
+import OpenInFullIcon from '@mui/icons-material/OpenInFull';
+import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
+import { useState } from 'react';
 
-export default function KPICard({ language, size, chartType, data, title, color, xDataKey, yDataKeys, metric, trendChangePercent }: any) {
+export default function KPICard({ language, size, chartType, data, title, color, xDataKey, yDataKeys, metric, metricDescription, trendChangePercent, fixed }: any) {
+    // Functions:
+    // Returns expand icon depending on card size:
+    function getExpandIcon() {
+        var IconToReturnTag: any;
+
+        switch (currentCardSize) {
+            // Using fallthrough, both small and medium cards render the same icon
+            case 's':
+            case 'm':
+                IconToReturnTag = OpenInFullIcon
+                break;
+            case 'l':
+                IconToReturnTag = CloseFullscreenIcon
+                break;
+            default:
+                return null;
+        }
+
+        return <IconToReturnTag fontSize={"small"} />
+    }
+
+    function updateExpandIcon() {
+        switch (currentCardSize) {
+            case 's':
+                setCurrentCardSize('m');
+                break;
+            case 'm':
+                setCurrentCardSize('l');
+                break;
+            case 'l':
+                setCurrentCardSize('s');
+                break;
+        }
+    }
+
     // Variables and constants:
+    // Sizing:
+    const [currentCardSize, setCurrentCardSize] = useState(size);
+
     // Dynamic components:
-    var IconComponent: any; 
+    var IconComponent: any;
     var IconComponentTag: any;
 
     // Colors:
-    var componentColor = "";
+    var iconComponentColor = "";
     const infoColor = "#808080"; // Color of text, chart configuration elements, etc.
 
-    // Modify depending on chart type:
+    // Modify metric depending on chart type:
     switch (chartType) {
         case "percent":
             // Modify metric:
@@ -28,30 +69,30 @@ export default function KPICard({ language, size, chartType, data, title, color,
             let v2 = data[1][dataKey]; // Extract value from 2nd data entry
 
             if (v1 != null && v2 != null) { // If v1 and v2 are defined
-                let percent = Math.min(v1,v2)/Math.max(v1,v2) * 100; // Calculate the percent of the minimum to the maximum
+                let percent = Math.min(v1, v2) / Math.max(v1, v2) * 100; // Calculate the percent of the minimum to the maximum
                 percent = Math.round(percent * 10) / 10 // Round to 1 decimal place
-                metric = percent.toString()+'%' // Turn metric into a percent
+                metric = percent.toString() + '%' // Turn metric into a percent
             }
             break;
         default:
             // Any other chart type:
-            metric = metric.toLocaleString() // format metric as number (commas, decimals, etc.)
+            if (metric !== undefined ) metric = metric.toLocaleString() // format metric as number (commas, decimals, etc.)
     }
 
     // Create trending icon component depending on slope:
     if (trendChangePercent < 0) {
         IconComponentTag = SouthEastIcon;
-        componentColor = "maroon";
+        iconComponentColor = "maroon";
 
     } else if (trendChangePercent > 0) {
         IconComponentTag = NorthEastIcon;
-        componentColor = "green";
+        iconComponentColor = "green";
     } else { // If 0:
         IconComponentTag = HorizontalRuleIcon;
-        componentColor = "orange";
+        iconComponentColor = "orange";
     }
 
-    IconComponent = <IconComponentTag {...{ sx: { fontSize: "medium", color: componentColor } }} />
+    IconComponent = <IconComponentTag {...{ sx: { fontSize: "medium", color: iconComponentColor } }} />
 
     return (
         <Box sx={{ minWidth: 200 }}>
@@ -59,48 +100,97 @@ export default function KPICard({ language, size, chartType, data, title, color,
                 variant="outlined"
                 sx={{ borderTop: "2px solid " + color }}
             >
-                <CardContent sx={{ background: "linear-gradient(to bottom, " + color + "25" + " -5%, #00000000 80%)" }}>
-                    {
-                        <KhobleChart
-                            size={size}
-                            chartType={chartType}
-                            color={color}
-                            xDataKey={xDataKey}
-                            yDataKeys={yDataKeys}
-                            data={data}
-                            configColor={infoColor}
-                        />
-                    }
-                    <Grid
-                        container
-                        alignItems={"center"}
-                    >
-                        <Grid
-                            item xs={6}
+                <CardContent sx={{
+                    background: "linear-gradient(to bottom, " + color + "25" + " -5%, #00000000 80%)",
+                    marginBottom: -3
+                }}
+                >
+                    <KhobleChart
+                        size={currentCardSize}
+                        chartType={chartType}
+                        color={color}
+                        xDataKey={xDataKey}
+                        yDataKeys={yDataKeys}
+                        data={data}
+                        configColor={infoColor}
+                    />
+                    {/* Metric row */}
+                    {metric !== undefined && /* Only renders if a metric was provided */
+                        <Grid /* Item container */
+                            container
                             alignItems={"center"}
+                            justifyContent="space-between"
+                        // sx={{ outline: '1px dashed white' }}
                         >
-                            <Typography gutterBottom variant="h6" component="div" color={color} sx={{ marginTop: 1 }}>
-                                {metric}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Grid
-                                container
-                                direction="row"
-                                justifyContent="flex-end"
-                                alignItems="center"
+                            <Grid /* Metric item wrapper */
+                                item /* (has to be item in order to be spaced) */
+                            // sx={{ border: '1px solid wheat' }}
                             >
-                                <Typography variant="body2" color={infoColor}>
-                                    {trendChangePercent + "%"}
-                                </Typography>
-                                {IconComponent}
+                                <Grid /* Metric container */
+                                    container
+                                    direction="column"
+                                    alignItems="flex-start"
+                                >
+                                    <Typography
+                                        variant="h6"
+                                        color={color}
+
+                                    >
+                                        {metric}
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        color={infoColor}
+                                    >
+                                        {metricDescription}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <Grid /* Metric item wrapper */
+                                item /* (has to be item in order to be spaced) */
+                            // sx={{ border: '1px solid wheat' }}
+                            >
+                                <Grid /* Percentage and trend icon container */
+                                    container
+                                    direction="row"
+                                    justifyContent="flex-end"
+                                    alignItems="center"
+                                >
+                                    <Typography variant="body2" color={infoColor}>
+                                        {trendChangePercent + "%"}
+                                    </Typography>
+                                    {IconComponent}
+                                </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
-                    <Typography variant="body2" color={infoColor}>
-                        {title}
-                    </Typography>
+                    }
                 </CardContent>
+                <CardActions>
+                    {/* Bottom row */}
+                    <Grid /* Column container */
+                        container
+                        direction={"row"}
+                        alignItems={"center"}
+                        justifyContent="space-between"
+                    // sx={{ outline: '1px dashed white' }}
+                    >
+                        <Typography
+                            marginTop={2}
+                            variant="body1"
+                            color={infoColor}
+                        >
+                            {title}
+                        </Typography>
+                        {!fixed &&
+                            <IconButton
+                                sx={{ color: infoColor }}
+                                onClick={updateExpandIcon}
+                            >
+                                {getExpandIcon()}
+                            </IconButton>
+                        }
+                    </Grid>
+                </CardActions>
             </Card>
         </Box>
     );

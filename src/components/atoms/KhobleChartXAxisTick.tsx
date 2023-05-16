@@ -33,7 +33,7 @@ export default function KhobleChartAxisTick({ x, y, textColor, payload, tickWidt
 
     // Clip the text so that it fits the tick width, adding a custom text suffix at the end:
     function getAdjustedText() {
-        const textSuffix = "...";
+        const textSuffix = "…";
         const textSuffixWidth = getTextWidth(textSuffix);
 
         var textSubstring = "";
@@ -46,10 +46,10 @@ export default function KhobleChartAxisTick({ x, y, textColor, payload, tickWidt
             nextCharIndex++; // Update the index of the next char
         }
         
-        return textSubstring+textSuffix // Return cropped text + "..."
+        return textSubstring+textSuffix // Return cropped text + textSuffix
     }
 
-    // // Log the name tick text, followed by its width compared to the width of the tick. This is very useful to visually debug when while resizing the chart component
+    // Log the name tick text, followed by its width compared to the width of the tick. This is very useful to visually debug when while resizing the chart component
     // console.log(payload.value+": "+getTextWidth(payload.value)+" / "+tickWidth);
 
     return (
