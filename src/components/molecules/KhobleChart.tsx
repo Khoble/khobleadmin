@@ -21,9 +21,13 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
     var L2ComponentProps = {};
 
     // Values used to manage changes in the chart brush:
-    const [brushStartIndex, setBrushStartIndex] = useState(0);
-    const defaultNumberOfXAxisTicks = 12;
-    const [brushEndIndex, setBrushEndIndex] = useState(defaultNumberOfXAxisTicks-1); // Brush end-index falls on the last data element of the default range (numerOfDefaultXAxisTcks)
+    const defaultNumberOfXAxisTicks = 12; 
+    const [brushStartIndex, setBrushStartIndex] = useState(0); // where the leftmost end of the brush will start (0 by default)
+    const [brushEndIndex, setBrushEndIndex] = useState( //  where the leftmost end of the brush will end
+        data.length < defaultNumberOfXAxisTicks? // if there are less data points than default number of x-axis ticks to show
+            data.length-1 : // the last index of the data array
+            defaultNumberOfXAxisTicks - 1
+    ); // Brush end-index falls on the last data element of the default range (numerOfDefaultXAxisTcks)
 
     // Sizing variables:
     var L1ComponentWidth = 275;
@@ -46,7 +50,7 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
     useEffect(() => {
         // Trigger right after components have been rendered:
         updateXAxisTickWidth(); // This makes sure that the x-axis ticks are rendered with actual text initially
-        
+
         // Set a resize listener to trigger the function that updates x-axis tick width
         window.addEventListener('resize', updateXAxisTickWidth);
 
@@ -54,7 +58,7 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
         return () => {
             window.removeEventListener('resize', updateXAxisTickWidth);
         };
-        
+
     });
 
     // Configuration by size:
@@ -86,10 +90,10 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
                 //     cursor={{ fill: configColor }} 
                 // />,
 
-                <CartesianGrid 
+                <CartesianGrid
                     key={"cartesianGrid"}
                     strokeDasharray='3 3'
-                    stroke={configColor+25} // 25% opacity on top
+                    stroke={configColor + 25} // 25% opacity on top
                 />,
 
                 // Add y-axis:
@@ -103,34 +107,39 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
                     key={"x-axis"}
                     dataKey={xDataKey}
                     interval={0} // Will not remove x-axis ticks that don't fit
-                tick={
-                    <KhobleChartAxisTick 
-                        textColor={configColor} 
-                        tickWidth={currentTickWidth}
-                    />
-                }
-                />,
-
-                // Add brush:
-                <Brush
-                    key={"brush"}
-                    dataKey={xDataKey}
-                    height={30}
-                    stroke={color}
-                    fill='transparent' // No background
-                    tickFormatter={() => ("")} // No text labels on the horizontal ends
-                    startIndex={brushStartIndex}
-                    endIndex={data.length < defaultNumberOfXAxisTicks ? data.length-1 : brushEndIndex} // Displays a fixed amount of L2 chart components
-                    onChange={(brush) => {
-                        // Update brush start and end indices:
-                        if (brush.startIndex != undefined && brush.endIndex != undefined) {
-                            setBrushStartIndex(brush.startIndex);
-                            setBrushEndIndex(brush.endIndex);
-                            // The previous 2 lines will trigger x-axis tick text adjustment, since such props are used in the 'updateXAxisTickWidth' function
-                        }
-                    }}
+                    tick={
+                        <KhobleChartAxisTick
+                            textColor={configColor}
+                            tickWidth={currentTickWidth}
+                        />
+                    }
                 />
-            )
+            );
+
+            // Add brush if data has more than 1 data point:
+            if (data.length > 1) {
+                // console.log("["+brushStartIndex+","+brushEndIndex+"]");
+                configurationComponents.push(
+                    <Brush
+                        key={"brush"}
+                        dataKey={xDataKey}
+                        height={30}
+                        stroke={color}
+                        fill='transparent' // No background
+                        tickFormatter={() => ("")} // No text labels on the horizontal ends
+                        startIndex={brushStartIndex}
+                        endIndex={brushEndIndex}
+                        onChange={(brush) => {
+                            // Update brush start and end indices:
+                            if (brush.startIndex != undefined && brush.endIndex != undefined) {
+                                setBrushStartIndex(brush.startIndex);
+                                setBrushEndIndex(brush.endIndex);
+                                // The previous 2 lines will trigger x-axis tick text adjustment, since such props are used in the 'updateXAxisTickWidth' function
+                            }
+                        }}
+                    />
+                );
+            }
 
             break;
         default:
@@ -195,18 +204,18 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
 
             // Adjust data:
             let dataKey = yDataKeys[0]; // Only 1 data key for percentage chart
-            let v1 = data[0][dataKey]; // Extract value from 1st data entry
-            let v2 = data[1][dataKey]; // Extract value from 2nd data entry
+            let dataCopy = Array.from(data, obj => JSON.parse(JSON.stringify(obj))); // create a deep copy of original data so that it is not modified 
+            let v1 = dataCopy[0][dataKey]; // Extract value from 1st data entry
+            let v2 = dataCopy[1][dataKey]; // Extract value from 2nd data entr
             let vMin = Math.min(v1, v2);
             let vMax = Math.max(v1, v2);
-            var adjustedData = data; // Create a copy of the data
-            adjustedData[0][dataKey] = vMax - vMin; // Make the data entries complementary to the max value
-            adjustedData[1][dataKey] = vMin;
+            dataCopy[0][dataKey] = vMin;
+            dataCopy[1][dataKey] = vMax - vMin; // will ensure the second slice of the pie chart is the complement to vMax
 
             // Unique props:
             L2ComponentProps = {
                 ...L2ComponentProps, ...{
-                    data: adjustedData,
+                    data: dataCopy,
                     cx: "50%",
                     cy: "100%",
                     startAngle: 180,

@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import KPICard from "../../organisms/KPICard";
 import { Grid } from '@mui/material';
+import khobleAPI from "../../../api/khobleAPI";
 
 const colors = {
     red: "#d88484",
@@ -9,7 +11,6 @@ const colors = {
     turquoise: "#84d8bc",
     lile: "#8c84d8",
     magenta: "#d884ce",
-
 }
 
 // Dummy data for x-y charts:
@@ -56,21 +57,19 @@ const linearData = [
         pv: 4300,
         amt: 2100,
     },
-]; //todo: api call
-
-const percentData = [
+];
+const dummyPercentData = [
     {
         name: "matches",
-        value: 359
+        value: 1
     },
     {
         name: "applications",
-        value: 407
+        value: 2
     }
 ]
-
 // Dummy data for the hired KPI:
-const hiredData = [
+const dummyHiredData = [
     { timestamp: "2023-01-01 00:00:00", hired: 338 },
     { timestamp: "2023-01-01 12:00:00", hired: 559 },
     { timestamp: "2023-01-02 00:00:00", hired: 644 },
@@ -102,14 +101,75 @@ const hiredData = [
 
 // Functions:
 // Get latest value of a data set given a key
-function getLatestValue(data: any, key: any){
-    let object = data[data.length-1];
+function getLatestValue(data: any, key: any) {
+    let object = data[data.length - 1];
     let value = object[key]
-    
+
     return value;
 }
 
 export default function GeneralKPIs({ language }: any) {
+    // Constants and variables:
+    // KPI data:
+    const [hiredData, setHiredData] = useState<any>(null);
+    const [matchedData, setMatchedData] = useState<any>(null);
+
+    const [isLoading, setIsLoading] = useState(true) // true by default to display the wrapper until the API calls are done
+
+    // API calls:
+    useEffect(() => {
+        // // Fetch all data:
+        const fetchAllData = async () => {
+            try {
+                const response = await khobleAPI.get("/dashboard/general"); // make API call
+                const responseProperty = "data" // specify the property of the response we want to extract
+                const rawData = await response[responseProperty]; // extract property
+                if (rawData) { // if property was found
+                    // Handle hired data:
+                    setHiredData(rawData.proposals);
+
+                    // Handle matched data:
+                    setMatchedData(
+                        [
+                            {
+                                name: "accepted",
+                                value: rawData.applications.accepted
+                            },
+                            {
+                                name: "total",
+                                value: rawData.applications.total
+                            }
+                        ]
+                    );
+                } else {
+                    throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+                }
+            } catch (error) {
+                console.error(error); // raise error explaining inability to connect to the endpoint 
+            }
+        };
+
+        // Main KPI call:
+        const fetchKPIData = async () => {
+            setIsLoading(true);
+            try {
+                await Promise.all([fetchAllData()]); // ensures all the calls are finished before proceeding
+            } catch (error) {
+                console.error(error); // handle error
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchKPIData(); // make main call
+    },
+        [] // empty array for 2nd argument indicates that useEffect will only run once after the initial render, not after re-renders as well
+    );
+
+    if (isLoading || hiredData === null) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <Grid
             container
@@ -118,21 +178,21 @@ export default function GeneralKPIs({ language }: any) {
             <Grid item>
                 <KPICard
                     language={language}
-                    size={'m'}
+                    size={'s'}
                     chartType={"line"}
                     data={hiredData}
                     color={colors.red}
-                    xDataKey={"timestamp"}
-                    yDataKeys={["hired"]}
-                    metric={getLatestValue(hiredData, "hired")}
+                    xDataKey={"_id"}
+                    yDataKeys={["total_hires"]}
+                    metric={getLatestValue(hiredData, "total_hires")}
                     metricDescription={
                         language === "english" ?
-                        "currently hired " :
-                        language === "español" ?
-                            "contratados actualmente" :
-                            ""
+                            "currently hired " :
+                            language === "español" ?
+                                "contratados actualmente" :
+                                ""
                     }
-                    trendChangePercent={14.8}
+                    trendChangePercent={''}
                 />
             </Grid>
             <Grid item>
@@ -140,11 +200,11 @@ export default function GeneralKPIs({ language }: any) {
                     language={language}
                     size={'m'}
                     chartType={"percent"}
-                    data={percentData}
+                    data={matchedData}
                     color={colors.magenta}
                     xDataKey={"name"}
                     yDataKeys={["value"]}
-                    trendChangePercent={5.7}
+                    trendChangePercent={''}
                     metricDescription={
                         language === "english" ?
                             "matched" :
@@ -156,5 +216,5 @@ export default function GeneralKPIs({ language }: any) {
                 />
             </Grid>
         </Grid>
-    )
+    );
 }

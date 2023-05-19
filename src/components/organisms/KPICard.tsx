@@ -68,7 +68,7 @@ export default function KPICard({ language, size, chartType, data, title, color,
             let v1 = data[0][dataKey]; // Extract value from 1st data entry
             let v2 = data[1][dataKey]; // Extract value from 2nd data entry
 
-            if (v1 != null && v2 != null) { // If v1 and v2 are defined
+            if (v1 != null && v2 != null) { // Ensure no division by 0
                 let percent = Math.min(v1, v2) / Math.max(v1, v2) * 100; // Calculate the percent of the minimum to the maximum
                 percent = Math.round(percent * 10) / 10 // Round to 1 decimal place
                 metric = percent.toString() + '%' // Turn metric into a percent

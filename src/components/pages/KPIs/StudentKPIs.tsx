@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import KPICard from "../../organisms/KPICard";
 import { Grid } from '@mui/material';
+import khobleAPI from "../../../api/khobleAPI";
 
 const colors = {
     red: "#d88484",
@@ -1104,6 +1106,79 @@ export default function CompanyKPIs({ language }: any) {
 
     ]
 
+    // Constants and variables:
+    // KPI data:
+    const [usersData, setUsersData] = useState<any>(null);
+    const [studentsByIndustryData, setStudentsByIndustryData] = useState<any>(null);
+
+    const [isLoading, setIsLoading] = useState(true) // true by default to display the wrapper until the API calls are done
+
+    // Functions:
+    // Array ordering function by key name:
+    function compareTimestamps(timestampKeyName: string) {
+        return function (a: any, b: any) {
+            const dateA = new Date(a[timestampKeyName]);
+            const dateB = new Date(b[timestampKeyName]);
+            return dateA.getTime() - dateB.getTime();
+        };
+    }
+
+    // API calls:
+    useEffect(() => {
+        // Fetch all data:
+        const fetchUsersData = async () => {
+            try {
+                const response = await khobleAPI.get("/dashboard/student"); // make API call
+                const responseProperty = "data" // specify the property of the response we want to extract
+                const rawData = await response[responseProperty]; // extract property
+                if (rawData) { // if property was found
+                    setUsersData(rawData.studentsRegisteredInTime);
+                } else {
+                    throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+                }
+            } catch (error) {
+                console.error(error); // raise error explaining inability to connect to the endpoint 
+            }
+        };
+
+        const studentsByIndustryData = async () => {
+            try {
+                const response = await khobleAPI.get("/dashboard/student/industry"); // make API call
+                const responseProperty = "data" // specify the property of the response we want to extract
+                const rawData = await response[responseProperty]; // extract property
+                if (rawData) { // if property was found
+                    setStudentsByIndustryData(rawData.studentsByIndustry);
+                } else {
+                    throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+                }
+            } catch (error) {
+                console.error(error); // raise error explaining inability to connect to the endpoint 
+            }
+        };
+
+        // Main KPI call:
+        const fetchKPIData = async () => {
+            setIsLoading(true);
+            try {
+                await Promise.all([ // ensures all the calls are finished before proceeding
+                    fetchUsersData(),
+                    studentsByIndustryData()
+                ]);
+            } catch (error) {
+                console.error(error); // handle error
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchKPIData(); // make main call
+    },
+        [] // empty array for 2nd argument indicates that useEffect will only run once after the initial render, not after re-renders as well
+    );
+
+    if (isLoading || usersData === null || studentsByIndustryData === null) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <Grid
@@ -1115,11 +1190,11 @@ export default function CompanyKPIs({ language }: any) {
                     language={language}
                     size={'m'}
                     chartType={"line"}
-                    data={usersOverTimeData}
+                    data={usersData}
                     color={colors.lile}
-                    xDataKey={"timestamp"}
-                    yDataKeys={["users"]}
-                    metric={getLatestValue(usersOverTimeData, "users")}
+                    xDataKey={"_id"}
+                    yDataKeys={["students"]}
+                    metric={getLatestValue(usersData, "students")}
                     metricDescription={
                         language === "english" ?
                             "Current Users" :
@@ -1127,7 +1202,7 @@ export default function CompanyKPIs({ language }: any) {
                                 "Usuarios actuales" :
                                 ""
                     }
-                    trendChangePercent={20}
+                    trendChangePercent={''}
                 />
             </Grid>
             <Grid item>
@@ -1135,7 +1210,7 @@ export default function CompanyKPIs({ language }: any) {
                     language={language}
                     size={'l'}
                     chartType={"bar"}
-                    data={industriesChosenOnSignupData}
+                    data={studentsByIndustryData}
                     title={
                         language === "english" ?
                             "Students by Industry Chosen on Sign Up" :
@@ -1146,7 +1221,7 @@ export default function CompanyKPIs({ language }: any) {
                     color={colors.magenta}
                     xDataKey={"industry"}
                     yDataKeys={["students"]}
-                    trendChangePercent={2.4}
+                    trendChangePercent={0}
                     fixed
                 />
             </Grid>
@@ -1158,9 +1233,9 @@ export default function CompanyKPIs({ language }: any) {
                     data={studentsBySemesterData}
                     title={
                         language === "english" ?
-                            "Students by Semester" :
+                            "Students by Semester (Fake Data)" :
                             language === "español" ?
-                                "Estudiantes por semestre" :
+                                "Estudiantes por semestre (datos falsos)" :
                                 ""
                     }
                     color={colors.red}
@@ -1177,9 +1252,9 @@ export default function CompanyKPIs({ language }: any) {
                     data={studentsByMajorData}
                     title={
                         language === "english" ?
-                            "Students by Major" :
+                            "Students by Major (Fake Data)" :
                             language === "español" ?
-                                "Estudiantes por carrera" :
+                                "Estudiantes por carrera (datos falsos)" :
                                 ""
                     }
                     color={colors.green}

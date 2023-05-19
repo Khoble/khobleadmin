@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import KPICard from "../../organisms/KPICard";
 import { Grid } from '@mui/material';
+import khobleAPI from "../../../api/khobleAPI";
 
 const colors = {
     red: "#d88484",
@@ -1351,6 +1353,116 @@ export default function CompanyKPIs({ language }: any) {
 
     ]
 
+    // Constants and variables:
+    // KPI data:
+    const [usersData, setUsersData] = useState<any>(null);
+    const [companiesByIndustryData, setCompaniesByIndustryData] = useState<any>(null);
+    const [postingsByIndustryData, setPostingsByIndustryData] = useState<any>(null);
+    const [postingsData, setPostingsData] = useState<any>(null);
+
+    const [isLoading, setIsLoading] = useState(true) // true by default to display the wrapper until the API calls are done
+
+    // Functions:
+    // Array ordering function by key name:
+    function compareTimestamps(timestampKeyName: string) {
+        return function (a: any, b: any) {
+            const dateA = new Date(a[timestampKeyName]);
+            const dateB = new Date(b[timestampKeyName]);
+            return dateA.getTime() - dateB.getTime();
+        };
+    }
+
+    // API calls:
+    useEffect(() => {
+        // Fetch all data:
+        const fetchUsersData = async () => {
+            try {
+                const response = await khobleAPI.get("/dashboard/company/users"); // make API call
+                const responseProperty = "data" // specify the property of the response we want to extract
+                const rawData = await response[responseProperty]; // extract property
+                if (rawData) { // if property was found
+                    // let objectArray = rawData.companiesRegisteredInTime;
+                    // objectArray.sort(compareTimestamps("_id"));
+                    // console.log(objectArray);
+                    setUsersData(rawData.companiesRegisteredInTime);
+                } else {
+                    throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+                }
+            } catch (error) {
+                console.error(error); // raise error explaining inability to connect to the endpoint 
+            }
+        };
+
+        // const fetchCompaniesByIndustryData = async () => {
+        //     try {
+        //         const response = await khobleAPI.get("/dashboard/company/industries"); // make API call
+        //         const responseProperty = "data" // specify the property of the response we want to extract
+        //         const rawData = await response[responseProperty]; // extract property
+        //         if (rawData) { // if property was found
+        //             console.log(rawData);
+        //         } else {
+        //             throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+        //         }
+        //     } catch (error) {
+        //         console.error(error); // raise error explaining inability to connect to the endpoint 
+        //     }
+        // };
+
+        const fetchPostingsByIndustryData = async () => {
+            try {
+                const response = await khobleAPI.get("/dashboard/company/publications/industries"); // make API call
+                const responseProperty = "data" // specify the property of the response we want to extract
+                const rawData = await response[responseProperty]; // extract property
+                if (rawData) { // if property was found
+                    setPostingsByIndustryData(rawData.publicationsByIndustry);
+                } else {
+                    throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+                }
+            } catch (error) {
+                console.error(error); // raise error explaining inability to connect to the endpoint 
+            }
+        };
+
+        const fetchPostingsData = async () => {
+            try {
+                const response = await khobleAPI.get("/dashboard/company/publications"); // make API call
+                const responseProperty = "data" // specify the property of the response we want to extract
+                const rawData = await response[responseProperty]; // extract property
+                if (rawData) { // if property was found
+                    setPostingsData(rawData.publicationsInTime);
+                } else {
+                    throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+                }
+            } catch (error) {
+                console.error(error); // raise error explaining inability to connect to the endpoint 
+            }
+        };
+
+        // Main KPI call:
+        const fetchKPIData = async () => {
+            setIsLoading(true);
+            try {
+                await Promise.all([ // ensures all the calls are finished before proceeding
+                    fetchUsersData(),
+                    // fetchCompaniesByIndustryData(),
+                    fetchPostingsByIndustryData(),
+                    fetchPostingsData()
+                ]);
+            } catch (error) {
+                console.error(error); // handle error
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchKPIData(); // make main call
+    },
+        [] // empty array for 2nd argument indicates that useEffect will only run once after the initial render, not after re-renders as well
+    );
+
+    if (isLoading || usersData === null /*|| companiesByIndustryData === null*/ || postingsByIndustryData === null || postingsData === null) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <Grid
@@ -1362,17 +1474,17 @@ export default function CompanyKPIs({ language }: any) {
                     language={language}
                     size={'m'}
                     chartType={"line"}
-                    data={usersOverTimeData}
+                    data={usersData}
                     color={colors.turquoise}
-                    xDataKey={"timestamp"}
-                    yDataKeys={["users"]}
-                    metric={getLatestValue(usersOverTimeData, "users")}
+                    xDataKey={"_id"}
+                    yDataKeys={["registered_companies"]}
+                    metric={getLatestValue(usersData, "registered_companies")}
                     metricDescription={
                         language === "english" ?
-                        "current users" :
-                        language === "español" ?
-                            "usuarios actuales" :
-                            ""
+                            "current users" :
+                            language === "español" ?
+                                "usuarios actuales" :
+                                ""
                     }
                     trendChangePercent={0}
                 />
@@ -1388,9 +1500,9 @@ export default function CompanyKPIs({ language }: any) {
                     yDataKeys={["companies"]}
                     title={
                         language === "english" ?
-                            "Companies by Industry" :
+                            "Companies by Industry (Fake Data)" :
                             language === "español" ?
-                                "Compañías por industria" :
+                                "Compañías por industria (datos falsos)" :
                                 ""
                     }
                     trendChangePercent={2.4}
@@ -1402,15 +1514,15 @@ export default function CompanyKPIs({ language }: any) {
                     language={language}
                     size={'l'}
                     chartType={"bar"}
-                    data={publishedIndustriesData}
+                    data={postingsByIndustryData}
                     color={colors.yellow}
                     xDataKey={"industry"}
-                    yDataKeys={["publications"]}
+                    yDataKeys={["total_publications"]}
                     title={
                         language === "english" ?
-                            "Publications by Industry" :
+                            "Job Postings by Industry" :
                             language === "español" ?
-                                "Publicaciones por industria" :
+                                "Publicaciones de trabajo por industria" :
                                 ""
                     }
                     trendChangePercent={-4}
@@ -1420,20 +1532,20 @@ export default function CompanyKPIs({ language }: any) {
             <Grid item>
                 <KPICard
                     language={language}
-                    size={'m'}
+                    size={'s'}
                     chartType={"line"}
-                    data={publicationsOverTimeData}
+                    data={postingsData}
                     color={colors.green}
-                    xDataKey={"timestamp"}
-                    yDataKeys={["publications"]}
-                    metric={getLatestValue(publicationsOverTimeData, "publications")}
-                    trendChangePercent={11.9}
+                    xDataKey={"_id"}
+                    yDataKeys={["total_publications"]}
+                    metric={getLatestValue(postingsData, "total_publications")}
+                    trendChangePercent={''}
                     metricDescription={
                         language === "english" ?
-                        "current publications" :
-                        language === "español" ?
-                            "publicaciones actuales" :
-                            ""
+                            "current publications" :
+                            language === "español" ?
+                                "publicaciones actuales" :
+                                ""
                     }
                 />
             </Grid>
