@@ -1359,18 +1359,10 @@ export default function CompanyKPIs({ language }: any) {
     const [companiesByIndustryData, setCompaniesByIndustryData] = useState<any>(null);
     const [postingsByIndustryData, setPostingsByIndustryData] = useState<any>(null);
     const [postingsData, setPostingsData] = useState<any>(null);
+    const timestampKeyName = "timestamp"; // the name of the key that has to do with timestamps in the objects from the API responses
+    const responseProperty = "data" // the name of the data property in the API responses
 
     const [isLoading, setIsLoading] = useState(true) // true by default to display the wrapper until the API calls are done
-
-    // Functions:
-    // Array ordering function by key name:
-    function compareTimestamps(timestampKeyName: string) {
-        return function (a: any, b: any) {
-            const dateA = new Date(a[timestampKeyName]);
-            const dateB = new Date(b[timestampKeyName]);
-            return dateA.getTime() - dateB.getTime();
-        };
-    }
 
     // API calls:
     useEffect(() => {
@@ -1378,12 +1370,8 @@ export default function CompanyKPIs({ language }: any) {
         const fetchUsersData = async () => {
             try {
                 const response = await khobleAPI.get("/dashboard/company/users"); // make API call
-                const responseProperty = "data" // specify the property of the response we want to extract
                 const rawData = await response[responseProperty]; // extract property
                 if (rawData) { // if property was found
-                    // let objectArray = rawData.companiesRegisteredInTime;
-                    // objectArray.sort(compareTimestamps("_id"));
-                    // console.log(objectArray);
                     setUsersData(rawData.companiesRegisteredInTime);
                 } else {
                     throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
@@ -1411,7 +1399,6 @@ export default function CompanyKPIs({ language }: any) {
         const fetchPostingsByIndustryData = async () => {
             try {
                 const response = await khobleAPI.get("/dashboard/company/publications/industries"); // make API call
-                const responseProperty = "data" // specify the property of the response we want to extract
                 const rawData = await response[responseProperty]; // extract property
                 if (rawData) { // if property was found
                     setPostingsByIndustryData(rawData.publicationsByIndustry);
@@ -1426,7 +1413,6 @@ export default function CompanyKPIs({ language }: any) {
         const fetchPostingsData = async () => {
             try {
                 const response = await khobleAPI.get("/dashboard/company/publications"); // make API call
-                const responseProperty = "data" // specify the property of the response we want to extract
                 const rawData = await response[responseProperty]; // extract property
                 if (rawData) { // if property was found
                     setPostingsData(rawData.publicationsInTime);
@@ -1476,9 +1462,9 @@ export default function CompanyKPIs({ language }: any) {
                     chartType={"line"}
                     data={usersData}
                     color={colors.turquoise}
-                    xDataKey={"_id"}
-                    yDataKeys={["registered_companies"]}
-                    metric={getLatestValue(usersData, "registered_companies")}
+                    xDataKey={timestampKeyName}
+                    yDataKeys={["companies"]}
+                    metric={getLatestValue(usersData, "companies")}
                     metricDescription={
                         language === "english" ?
                             "current users" :
@@ -1536,7 +1522,7 @@ export default function CompanyKPIs({ language }: any) {
                     chartType={"line"}
                     data={postingsData}
                     color={colors.green}
-                    xDataKey={"_id"}
+                    xDataKey={timestampKeyName}
                     yDataKeys={["total_publications"]}
                     metric={getLatestValue(postingsData, "total_publications")}
                     trendChangePercent={''}

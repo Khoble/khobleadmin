@@ -1110,6 +1110,8 @@ export default function CompanyKPIs({ language }: any) {
     // KPI data:
     const [usersData, setUsersData] = useState<any>(null);
     const [studentsByIndustryData, setStudentsByIndustryData] = useState<any>(null);
+    const timestampKeyName = "timestamp"; // the name of the key that has to do with timestamps in the objects from the API responses
+    const responseProperty = "data" // the name of the data property in the API responses
 
     const [isLoading, setIsLoading] = useState(true) // true by default to display the wrapper until the API calls are done
 
@@ -1129,10 +1131,10 @@ export default function CompanyKPIs({ language }: any) {
         const fetchUsersData = async () => {
             try {
                 const response = await khobleAPI.get("/dashboard/student"); // make API call
-                const responseProperty = "data" // specify the property of the response we want to extract
                 const rawData = await response[responseProperty]; // extract property
                 if (rawData) { // if property was found
-                    setUsersData(rawData.studentsRegisteredInTime);
+                    let myData = rawData.studentsRegisteredInTime;
+                    setUsersData(myData);
                 } else {
                     throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
                 }
@@ -1192,7 +1194,7 @@ export default function CompanyKPIs({ language }: any) {
                     chartType={"line"}
                     data={usersData}
                     color={colors.lile}
-                    xDataKey={"_id"}
+                    xDataKey={timestampKeyName}
                     yDataKeys={["students"]}
                     metric={getLatestValue(usersData, "students")}
                     metricDescription={

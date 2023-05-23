@@ -113,6 +113,8 @@ export default function GeneralKPIs({ language }: any) {
     // KPI data:
     const [hiredData, setHiredData] = useState<any>(null);
     const [matchedData, setMatchedData] = useState<any>(null);
+    const timestampKeyName = "timestamp"; // the name of the key that has to do with timestamps in the objects from the API responses
+    const responseProperty = "data" // the name of the data property in the API responses
 
     const [isLoading, setIsLoading] = useState(true) // true by default to display the wrapper until the API calls are done
 
@@ -122,7 +124,6 @@ export default function GeneralKPIs({ language }: any) {
         const fetchAllData = async () => {
             try {
                 const response = await khobleAPI.get("/dashboard/general"); // make API call
-                const responseProperty = "data" // specify the property of the response we want to extract
                 const rawData = await response[responseProperty]; // extract property
                 if (rawData) { // if property was found
                     // Handle hired data:
@@ -182,7 +183,7 @@ export default function GeneralKPIs({ language }: any) {
                     chartType={"line"}
                     data={hiredData}
                     color={colors.red}
-                    xDataKey={"_id"}
+                    xDataKey={timestampKeyName}
                     yDataKeys={["total_hires"]}
                     metric={getLatestValue(hiredData, "total_hires")}
                     metricDescription={
