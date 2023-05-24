@@ -31,7 +31,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<Navigate replace to={defaultRoute} />}/>
+          <Route path='/khobleadmin' element={<Navigate replace to={defaultRoute} />}/>
           <Route path='/KPIs/general' element={getSidebarComponent(<GeneralKPIs language={language} />)} />
           <Route path='/KPIs/companies' element={getSidebarComponent(<CompanyKPIs language={language} />)} />
           <Route path='/KPIs/students' element={getSidebarComponent(<StudentKPIs language={language}/>)} />
