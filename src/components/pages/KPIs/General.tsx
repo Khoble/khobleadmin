@@ -108,7 +108,7 @@ function getLatestValue(data: any, key: any) {
     return value;
 }
 
-export default function GeneralKPIs({ language }: any) {
+export default function General({ language }: any) {
     // Constants and variables:
     // KPI data:
     const [hiredData, setHiredData] = useState<any>(null);

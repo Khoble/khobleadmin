@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import KPICard from "../../organisms/KPICard";
 import { Grid } from '@mui/material';
 import khobleAPI from "../../../api/khobleAPI";
+import Datatable from "../../molecules/Datatable";
 
 const colors = {
     red: "#d88484",
@@ -36,7 +37,7 @@ function getSumOfValues(data: any, key: any) {
 
 
 
-export default function CompanyKPIs({ language }: any) {
+export default function Companies({ language }: any) {
     // Dummy data:
     const usersOverTimeData = [
         {
@@ -1352,6 +1353,95 @@ export default function CompanyKPIs({ language }: any) {
         }
 
     ]
+    const companiesTableDummyCols = [
+        { field: "Name", flex: 1 },
+        { field: "Location", flex: 1 },
+        { field: "Is Verified", flex: 1 },
+        { field: "Total Job Posts", flex: 1 },
+        { field: "Main Recruiter Info", flex: 1 }
+    ]
+    const companiesTableDummyRows = [
+        {
+            id: 1,
+            "Name": "ABC Corporation",
+            "Location": "New York",
+            "Is Verified": true,
+            "Total Job Posts": 5,
+            "Main Recruiter Info": "johndoe@example.com"
+        },
+        {
+            id: 2,
+            "Name": "XYZ Enterprises",
+            "Location": "Los Angeles",
+            "Is Verified": false,
+            "Total Job Posts": 8,
+            "Main Recruiter Info": "+1 (123) 456-7890"
+        },
+        {
+            id: 3,
+            "Name": "PQR Solutions",
+            "Location": "San Francisco",
+            "Is Verified": true,
+            "Total Job Posts": 3,
+            "Main Recruiter Info": "alexjohnson@example.com"
+        },
+        {
+            id: 4,
+            "Name": "LMN Industries",
+            "Location": "Chicago",
+            "Is Verified": true,
+            "Total Job Posts": 10,
+            "Main Recruiter Info": "+1 (987) 654-3210"
+        },
+        {
+            id: 5,
+            "Name": "EFG Services",
+            "Location": "Seattle",
+            "Is Verified": false,
+            "Total Job Posts": 2,
+            "Main Recruiter Info": "recruiter@example.com"
+        },
+        {
+            id: 6,
+            "Name": "QRS Solutions",
+            "Location": "Boston",
+            "Is Verified": true,
+            "Total Job Posts": 7,
+            "Main Recruiter Info": "+1 (555) 123-4567"
+        },
+        {
+            id: 7,
+            "Name": "GHI Tech",
+            "Location": "Austin",
+            "Is Verified": false,
+            "Total Job Posts": 4,
+            "Main Recruiter Info": "recruiter2@example.com"
+        },
+        {
+            id: 8,
+            "Name": "JKL Enterprises",
+            "Location": "Miami",
+            "Is Verified": true,
+            "Total Job Posts": 6,
+            "Main Recruiter Info": "+1 (111) 222-3333"
+        },
+        {
+            id: 9,
+            "Name": "MNO Corporation",
+            "Location": "Denver",
+            "Is Verified": true,
+            "Total Job Posts": 9,
+            "Main Recruiter Info": "mainrecruiter@example.com"
+        },
+        {
+            id: 10,
+            "Name": "UVW Solutions",
+            "Location": "Houston",
+            "Is Verified": false,
+            "Total Job Posts": 1,
+            "Main Recruiter Info": "+1 (444) 555-6666"
+        }
+    ];
 
     // Constants and variables:
     // KPI data:
@@ -1535,6 +1625,10 @@ export default function CompanyKPIs({ language }: any) {
                     }
                 />
             </Grid>
+            <Datatable
+                columns = {companiesTableDummyCols}
+                rows = {companiesTableDummyRows}
+            />
         </Grid>
     )
 }

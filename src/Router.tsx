@@ -4,9 +4,9 @@ import ReactDOM from 'react-dom/client'
 import '../src/styles/index.css'
 import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom'
 import Sidebar from './components/organisms/Sidebar';
-import GeneralKPIs from './components/pages/KPIs/GeneralKPIs';
-import CompanyKPIs from './components/pages/KPIs/CompanyKPIs';
-import StudentKPIs from './components/pages/KPIs/StudentKPIs';
+import General from './components/pages/KPIs/General';
+import Companies from './components/pages/KPIs/Companies';
+import Students from './components/pages/KPIs/Students';
 
 // Determine's global theme: 
 const theme = createTheme({
@@ -19,7 +19,7 @@ const theme = createTheme({
 const language = "english"; // todo: api call
 
 // Default route that sidebar will render: 
-const defaultRoute = "/KPIs/general";
+const defaultRoute = "/general";
 
 // Returns a siderbar component from a child, which is the component that corresponds to its main view
 function getSidebarComponent(child: any) {
@@ -32,9 +32,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <BrowserRouter basename={'/khobleadmin'}>
         <Routes>
           <Route path='/' element={<Navigate replace to={defaultRoute} />}/>
-          <Route path='/KPIs/general' element={getSidebarComponent(<GeneralKPIs language={language} />)} />
-          <Route path='/KPIs/companies' element={getSidebarComponent(<CompanyKPIs language={language} />)} />
-          <Route path='/KPIs/students' element={getSidebarComponent(<StudentKPIs language={language}/>)} />
+          <Route path={defaultRoute} element={getSidebarComponent(<General language={language} />)} />
+          <Route path='/companies' element={getSidebarComponent(<Companies language={language} />)} />
+          <Route path='/students' element={getSidebarComponent(<Students language={language}/>)} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

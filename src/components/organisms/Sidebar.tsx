@@ -118,7 +118,7 @@ export default function Sidebar({ language, renderedContent }: any) {
                 language === "español" ? 
                     "Generales" :
                 "",
-            navigateTo: "KPIs/general"
+            navigateTo: "general"
         },
         {
             icon: BusinessIcon,
@@ -128,7 +128,7 @@ export default function Sidebar({ language, renderedContent }: any) {
                 language === "español" ? 
                     "Compañías" :
                 "",
-            navigateTo: "KPIs/companies"
+            navigateTo: "companies"
         },
         {
             icon: SchoolIcon,
@@ -138,7 +138,7 @@ export default function Sidebar({ language, renderedContent }: any) {
                 language === "español" ? 
                     "Estudiantes" :
                 "",
-            navigateTo: "KPIs/students"
+            navigateTo: "students"
         }
     ]; // Contains the configuration of the sidebar
 
@@ -192,13 +192,14 @@ export default function Sidebar({ language, renderedContent }: any) {
                     </ListItemButton>
                 </ListItem>
             
-            // Assign the tab label based on language:
+            // // Assign the tab label based on language:
             if (shouldSelectTab) tabLabel = 
-                language === "english" ? 
-                    sidebarTab.drawerLabel + " KPIs" :
-                language === "español" ? 
-                    "KPIs " + sidebarTab.drawerLabel.toLowerCase() :
-                ""
+                // language === "english" ? 
+                //     sidebarTab.drawerLabel + " KPIs" :
+                // language === "español" ? 
+                //     "KPIs " + sidebarTab.drawerLabel.toLowerCase() :
+                // ""
+                tabLabel = sidebarTab.drawerLabel
         
             // Store the list item:
             listItemArray.push(currentListItem);
