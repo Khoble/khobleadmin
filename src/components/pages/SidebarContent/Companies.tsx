@@ -39,185 +39,6 @@ function getSumOfValues(data: any, key: any) {
 
 export default function Companies({ language }: any) {
     // Dummy data:
-    const usersOverTimeData = [
-        {
-            timestamp: "2023/02/1 12:32:03",
-            users: 131,
-        },
-
-        {
-            timestamp: "2023/02/2 12:32:03",
-            users: 205,
-        },
-
-
-        {
-            timestamp: "2023/02/3 12:32:03",
-            users: 224,
-        },
-
-
-        {
-            timestamp: "2023/02/4 12:32:03",
-            users: 600,
-        },
-
-
-        {
-            timestamp: "2023/02/5 12:32:03",
-            users: 721,
-        },
-
-
-        {
-            timestamp: "2023/02/6 12:32:03",
-            users: 838,
-        },
-
-
-        {
-            timestamp: "2023/02/7 12:32:03",
-            users: 908,
-        },
-
-        {
-            timestamp: "2023/02/8 12:32:03",
-            users: 1053,
-        },
-
-
-        {
-            timestamp: "2023/02/9 12:32:03",
-            users: 1132,
-        },
-
-
-        {
-            timestamp: "2023/02/10 12:32:03",
-            users: 1133,
-        },
-
-
-        {
-            timestamp: "2023/02/11 12:32:03",
-            users: 1133,
-        },
-
-        {
-            timestamp: "2023/02/12 12:32:03",
-            users: 1412,
-        },
-
-
-        {
-            timestamp: "2023/02/13 12:32:03",
-            users: 1659,
-        },
-
-        {
-            timestamp: "2023/02/14 12:32:03",
-            users: 2060,
-        },
-
-
-        {
-            timestamp: "2023/02/15 12:32:03",
-            users: 2187,
-        },
-
-        {
-            timestamp: "2023/02/16 12:32:03",
-            users: 2317,
-        },
-
-
-        {
-            timestamp: "2023/02/17 12:32:03",
-            users: 2477,
-        },
-
-
-        {
-            timestamp: "2023/02/18 12:32:03",
-            users: 2501,
-        },
-
-
-        {
-            timestamp: "2023/02/19 12:32:03",
-            users: 2844,
-        },
-
-        {
-            timestamp: "2023/02/20 12:32:03",
-            users: 2947,
-        },
-
-
-        {
-            timestamp: "2023/02/21 12:32:03",
-            users: 2969,
-        },
-
-
-        {
-            timestamp: "2023/02/22 12:32:03",
-            users: 2972,
-        },
-
-        {
-            timestamp: "2023/02/23 12:32:03",
-            users: 2983,
-        },
-
-
-        {
-            timestamp: "2023/02/24 12:32:03",
-            users: 3098,
-        },
-
-
-        {
-            timestamp: "2023/02/25 12:32:03",
-            users: 3237,
-        },
-
-
-        {
-            timestamp: "2023/02/26 12:32:03",
-            users: 3310,
-        },
-
-
-        {
-            timestamp: "2023/02/27 12:32:03",
-            users: 3661,
-        },
-
-        {
-            timestamp: "2023/02/28 12:32:03",
-            users: 3694,
-        },
-
-
-        {
-            timestamp: "2023/02/29 12:32:03",
-            users: 3796,
-        },
-
-
-        {
-            timestamp: "2023/02/30 12:32:03",
-            users: 3896,
-        },
-
-
-        {
-            timestamp: "2023/02/31 12:32:03",
-            users: 3941,
-        }
-
-    ]
     const companiesUnderIndustryData = [
         {
             industry:
@@ -691,764 +512,15 @@ export default function Companies({ language }: any) {
         }
 
     ]
-    const publishedIndustriesData = [
-        {
-            industry:
-                language === "english" ?
-                    "Wholesale and retail sales" :
-                    language === "español" ?
-                        "Ventas al mayoreo y menudeo" :
-                        "",
-            publications: 158
-        },
-
-        {
-            industry:
-                language === "english" ?
-                    "Telecommunications" :
-                    language === "español" ?
-                        "Telecomunicaciones" :
-                        "",
-            publications: 130
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Human Resources" :
-                    language === "español" ?
-                        "Recursos humanos" :
-                        "",
-            publications: 206
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Finance" :
-                    language === "español" ?
-                        "Finanzas" :
-                        "",
-            publications: 136
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Information Technology" :
-                    language === "español" ?
-                        "Tecnologías de la información" :
-                        "",
-            publications: 397
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Administration and consulting" :
-                    language === "español" ?
-                        "Administración y consultoría" :
-                        "",
-            publications: 524
-        },
-
-        {
-            industry:
-                language === "english" ?
-                    "Manufacturing" :
-                    language === "español" ?
-                        "Manufactura" :
-                        "",
-            publications: 323
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Restaurants and food services" :
-                    language === "español" ?
-                        "Restaurantes y servicios de comidas" :
-                        "",
-            publications: 84
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Transport and logistics" :
-                    language === "español" ?
-                        "Transporte y logística" :
-                        "",
-            publications: 464
-        },
-
-        {
-            industry:
-                language === "english" ?
-                    "Health" :
-                    language === "español" ?
-                        "Salud" :
-                        "",
-            publications: 292
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Audiovisual and media" :
-                    language === "español" ?
-                        "Audiovisual y medios de comunicación" :
-                        "",
-            publications: 536
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Education" :
-                    language === "español" ?
-                        "Educación" :
-                        "",
-            publications: 377
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Tourism and lodging" :
-                    language === "español" ?
-                        "Turismo y hospedaje" :
-                        "",
-            publications: 197
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Construction, repair and maintenance services" :
-                    language === "español" ?
-                        "Servicios de construcción, reparación y mantenimiento" :
-                        "",
-            publications: 83
-        },
-
-        {
-            industry:
-                language === "english" ?
-                    "Pharmaceutical and biotechnology" :
-                    language === "español" ?
-                        "Farmacéutica y biotecnología" :
-                        "",
-            publications: 436
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Personal consumer services" :
-                    language === "español" ?
-                        "Servicios personales al consumidor" :
-                        "",
-            publications: 111
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Insurance" :
-                    language === "español" ?
-                        "Seguros" :
-                        "",
-            publications: 380
-        },
-
-        {
-            industry:
-                language === "english" ?
-                    "Legal" :
-                    language === "español" ?
-                        "Legal" :
-                        "",
-            publications: 201
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Real estate" :
-                    language === "español" ?
-                        "Bienes raíces" :
-                        "",
-            publications: 311
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Energy, mining and public infrastructure" :
-                    language === "español" ?
-                        "Energía, minería e infraestructura pública" :
-                        "",
-            publications: 426
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "NGOs and non-profit organizations" :
-                    language === "español" ?
-                        "ONG y Organizaciones sin fines de lucro" :
-                        "",
-            publications: 198
-        },
-
-        {
-            industry:
-                language === "english" ?
-                    "Government and public administration" :
-                    language === "español" ?
-                        "Gobierno y administración pública" :
-                        "",
-            publications: 236
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Arts and entertainment" :
-                    language === "español" ?
-                        "Artes y entretenimiento" :
-                        "",
-            publications: 403
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Aerospace and defense" :
-                    language === "español" ?
-                        "Aeroespacial y defensa" :
-                        "",
-            publications: 342
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Call center / telemarketing" :
-                    language === "español" ?
-                        "CallCenter / Telemercadeo" :
-                        "",
-            publications: 354
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Customer service" :
-                    language === "español" ?
-                        "Atención a clientes" :
-                        "",
-            publications: 320
-        },
-
-        {
-            industry:
-                language === "english" ?
-                    "Administration / office" :
-                    language === "español" ?
-                        "Administración / Oficina" :
-                        "",
-            publications: 208
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Accounting / finance" :
-                    language === "español" ?
-                        "Contabilidad / Finanzas" :
-                        "",
-            publications: 495
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Medicine / health" :
-                    language === "español" ?
-                        "Medicina / Salud" :
-                        "",
-            publications: 163
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Warehouse / logistics / transport" :
-                    language === "español" ?
-                        "Almacén / Logística / Transporte" :
-                        "",
-            publications: 250
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Human resources" :
-                    language === "español" ?
-                        "Recursos Humanos" :
-                        "",
-            publications: 352
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "General services, cleaning and security" :
-                    language === "español" ?
-                        "Servicios Generales, Aseo y Seguridad" :
-                        "",
-            publications: 280
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Marketing" :
-                    language === "español" ?
-                        "Mercadotecnia" :
-                        "",
-            publications: 489
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Advertising" :
-                    language === "español" ?
-                        "Publicidad" :
-                        "",
-            publications: 282
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Communication" :
-                    language === "español" ?
-                        "Comunicación" :
-                        "",
-            publications: 150
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Technical maintenance and repairs" :
-                    language === "español" ?
-                        "Mantenimiento y reparaciones técnicas" :
-                        "",
-            publications: 51
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Production / operators / manufacturing" :
-                    language === "español" ?
-                        "Producción / Operarios / Manufactura" :
-                        "",
-            publications: 361
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Information technology - systems" :
-                    language === "español" ?
-                        "Tecnologías de la Información - Sistemas" :
-                        "",
-            publications: 526
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Accounting - finance" :
-                    language === "español" ?
-                        "Contabilidad - Finanzas" :
-                        "",
-            publications: 75
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Manufacturing - production - operation" :
-                    language === "español" ?
-                        "Manufactura - Producción - Operación" :
-                        "",
-            publications: 250
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Logistics - transport - distribution - warehouse" :
-                    language === "español" ?
-                        "Logística - Transporte - Distribución - Almacén" :
-                        "",
-            publications: 566
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Administrative" :
-                    language === "español" ?
-                        "Administrativo" :
-                        "",
-            publications: 482
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Engineering" :
-                    language === "español" ?
-                        "Ingeniería" :
-                        "",
-            publications: 466
-        },
-
-
-        {
-            industry:
-                language === "english" ?
-                    "Marketing - Advertising - Public Relations" :
-                    language === "español" ?
-                        "Mercadotecnia - Publicidad - Relaciones Públicas" :
-                        "",
-            publications: 237
-        }
-
-    ]
-    const publicationsOverTimeData = [
-        {
-            timestamp: "2023/02/1 12:32:03",
-            publications: 663,
-        },
-
-        {
-            timestamp: "2023/02/2 12:32:03",
-            publications: 664,
-        },
-
-
-        {
-            timestamp: "2023/02/3 12:32:03",
-            publications: 1524,
-        },
-
-
-        {
-            timestamp: "2023/02/4 12:32:03",
-            publications: 1571,
-        },
-
-
-        {
-            timestamp: "2023/02/5 12:32:03",
-            publications: 2951,
-        },
-
-
-        {
-            timestamp: "2023/02/6 12:32:03",
-            publications: 3346,
-        },
-
-
-        {
-            timestamp: "2023/02/7 12:32:03",
-            publications: 3568,
-        },
-
-
-        {
-            timestamp: "2023/02/8 12:32:03",
-            publications: 3643,
-        },
-
-
-        {
-            timestamp: "2023/02/9 12:32:03",
-            publications: 3974,
-        },
-
-        {
-            timestamp: "2023/02/10 12:32:03",
-            publications: 4103,
-        },
-
-
-        {
-            timestamp: "2023/02/11 12:32:03",
-            publications: 4519,
-        },
-
-
-        {
-            timestamp: "2023/02/12 12:32:03",
-            publications: 4673,
-        },
-
-
-        {
-            timestamp: "2023/02/13 12:32:03",
-            publications: 5319,
-        },
-
-        {
-            timestamp: "2023/02/14 12:32:03",
-            publications: 5891,
-        },
-
-
-        {
-            timestamp: "2023/02/15 12:32:03",
-            publications: 6131,
-        },
-
-
-        {
-            timestamp: "2023/02/16 12:32:03",
-            publications: 6268,
-        },
-
-
-        {
-            timestamp: "2023/02/17 12:32:03",
-            publications: 6748,
-        },
-
-
-        {
-            timestamp: "2023/02/18 12:32:03",
-            publications: 8342,
-        },
-
-
-        {
-            timestamp: "2023/02/19 12:32:03",
-            publications: 8784,
-        },
-
-
-        {
-            timestamp: "2023/02/20 12:32:03",
-            publications: 8969,
-        },
-
-
-        {
-            timestamp: "2023/02/21 12:32:03",
-            publications: 8998,
-        },
-
-
-        {
-            timestamp: "2023/02/22 12:32:03",
-            publications: 9083,
-        },
-
-
-        {
-            timestamp: "2023/02/23 12:32:03",
-            publications: 10600,
-        },
-
-
-        {
-            timestamp: "2023/02/24 12:32:03",
-            publications: 10625,
-        },
-
-
-        {
-            timestamp: "2023/02/25 12:32:03",
-            publications: 11364,
-        },
-
-
-        {
-            timestamp: "2023/02/26 12:32:03",
-            publications: 11805,
-        },
-
-
-        {
-            timestamp: "2023/02/27 12:32:03",
-            publications: 12262,
-        },
-
-
-        {
-            timestamp: "2023/02/28 12:32:03",
-            publications: 12832,
-        },
-
-
-        {
-            timestamp: "2023/02/29 12:32:03",
-            publications: 12836,
-        },
-
-
-        {
-            timestamp: "2023/02/30 12:32:03",
-            publications: 12863,
-        },
-
-
-        {
-            timestamp: "2023/02/31 12:32:03",
-            publications: 14001,
-        }
-
-    ]
-    const companiesTableDummyCols = [
-        { field: "Name", flex: 1 },
-        { field: "Location", flex: 1 },
-        { field: "Is Verified", flex: 1 },
-        { field: "Total Job Posts", flex: 1 },
-        { field: "Main Recruiter Info", flex: 1 }
-    ]
-    const companiesTableDummyRows = [
-        {
-            id: 1,
-            "Name": "ABC Corporation",
-            "Location": "New York",
-            "Is Verified": true,
-            "Total Job Posts": 5,
-            "Main Recruiter Info": "johndoe@example.com"
-        },
-        {
-            id: 2,
-            "Name": "XYZ Enterprises",
-            "Location": "Los Angeles",
-            "Is Verified": false,
-            "Total Job Posts": 8,
-            "Main Recruiter Info": "+1 (123) 456-7890"
-        },
-        {
-            id: 3,
-            "Name": "PQR Solutions",
-            "Location": "San Francisco",
-            "Is Verified": true,
-            "Total Job Posts": 3,
-            "Main Recruiter Info": "alexjohnson@example.com"
-        },
-        {
-            id: 4,
-            "Name": "LMN Industries",
-            "Location": "Chicago",
-            "Is Verified": true,
-            "Total Job Posts": 10,
-            "Main Recruiter Info": "+1 (987) 654-3210"
-        },
-        {
-            id: 5,
-            "Name": "EFG Services",
-            "Location": "Seattle",
-            "Is Verified": false,
-            "Total Job Posts": 2,
-            "Main Recruiter Info": "recruiter@example.com"
-        },
-        {
-            id: 6,
-            "Name": "QRS Solutions",
-            "Location": "Boston",
-            "Is Verified": true,
-            "Total Job Posts": 7,
-            "Main Recruiter Info": "+1 (555) 123-4567"
-        },
-        {
-            id: 7,
-            "Name": "GHI Tech",
-            "Location": "Austin",
-            "Is Verified": false,
-            "Total Job Posts": 4,
-            "Main Recruiter Info": "recruiter2@example.com"
-        },
-        {
-            id: 8,
-            "Name": "JKL Enterprises",
-            "Location": "Miami",
-            "Is Verified": true,
-            "Total Job Posts": 6,
-            "Main Recruiter Info": "+1 (111) 222-3333"
-        },
-        {
-            id: 9,
-            "Name": "MNO Corporation",
-            "Location": "Denver",
-            "Is Verified": true,
-            "Total Job Posts": 9,
-            "Main Recruiter Info": "mainrecruiter@example.com"
-        },
-        {
-            id: 10,
-            "Name": "UVW Solutions",
-            "Location": "Houston",
-            "Is Verified": false,
-            "Total Job Posts": 1,
-            "Main Recruiter Info": "+1 (444) 555-6666"
-        }
-    ];
 
     // Constants and variables:
     // KPI data:
-    const [usersData, setUsersData] = useState<any>(null);
+    const [companiesOverTimeData, setCompaniesOverTimeData] = useState<any>(null);
     const [companiesByIndustryData, setCompaniesByIndustryData] = useState<any>(null);
     const [postingsByIndustryData, setPostingsByIndustryData] = useState<any>(null);
-    const [postingsData, setPostingsData] = useState<any>(null);
+    const [postingsOverTimeData, setPostingsOverTimeData] = useState<any>(null);
+    const [companiesUserTableRows, setCompaniesUserTableRows] = useState<any>(null);
+    const [companiesUserTableColumns, setCompaniesUserTableColumns] = useState<any>(null);
     const timestampKeyName = "timestamp"; // the name of the key that has to do with timestamps in the objects from the API responses
     const responseProperty = "data" // the name of the data property in the API responses
 
@@ -1456,13 +528,12 @@ export default function Companies({ language }: any) {
 
     // API calls:
     useEffect(() => {
-        // Fetch all data:
-        const fetchUsersData = async () => {
+        const fetchCompaniesOverTime = async () => {
             try {
-                const response = await khobleAPI.get("/dashboard/company/users"); // make API call
+                const response = await khobleAPI.get("/dashboard/company/registered-in-time"); // make API call
                 const rawData = await response[responseProperty]; // extract property
                 if (rawData) { // if property was found
-                    setUsersData(rawData.companiesRegisteredInTime);
+                    setCompaniesOverTimeData(rawData.companiesRegisteredInTime);
                 } else {
                     throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
                 }
@@ -1473,7 +544,7 @@ export default function Companies({ language }: any) {
 
         // const fetchCompaniesByIndustryData = async () => {
         //     try {
-        //         const response = await khobleAPI.get("/dashboard/company/industries"); // make API call
+        //         const response = await khobleAPI.get("/dashboard/company/by-industries"); // make API call
         //         const responseProperty = "data" // specify the property of the response we want to extract
         //         const rawData = await response[responseProperty]; // extract property
         //         if (rawData) { // if property was found
@@ -1486,9 +557,9 @@ export default function Companies({ language }: any) {
         //     }
         // };
 
-        const fetchPostingsByIndustryData = async () => {
+        const fetchPostingsByIndustry = async () => {
             try {
-                const response = await khobleAPI.get("/dashboard/company/publications/industries"); // make API call
+                const response = await khobleAPI.get("/dashboard/company/publications-by-industries"); // make API call
                 const rawData = await response[responseProperty]; // extract property
                 if (rawData) { // if property was found
                     setPostingsByIndustryData(rawData.publicationsByIndustry);
@@ -1500,12 +571,39 @@ export default function Companies({ language }: any) {
             }
         };
 
-        const fetchPostingsData = async () => {
+        const fetchPostingsOverTime = async () => {
             try {
-                const response = await khobleAPI.get("/dashboard/company/publications"); // make API call
+                const response = await khobleAPI.get("/dashboard/company/publications-in-time"); // make API call
                 const rawData = await response[responseProperty]; // extract property
                 if (rawData) { // if property was found
-                    setPostingsData(rawData.publicationsInTime);
+                    setPostingsOverTimeData(rawData.publicationsInTime);
+                } else {
+                    throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+                }
+            } catch (error) {
+                console.error(error); // raise error explaining inability to connect to the endpoint 
+            }
+        };
+
+        const fetchCompaniesUserTable = async () => {
+            try {
+                const response = await khobleAPI.get("/dashboard/company"); // make API call
+                const responseProperty = "data" // specify the property of the response we want to extract
+                const rawData = await response[responseProperty]; // extract property
+                if (rawData) { // if property was found
+                    var columns: any = []; // auxiliary array to save the companies table columns
+                    var rows: any = []; // auxiliary array to save the student table rows
+                    rawData.companies.map((company: any, userIndex: any) => { // for every student
+                        let shouldSaveColumns = userIndex===0 // flag to save the columns only on first iteration
+                        let rowObject: any = {"id": userIndex} // auxiliary object build based on the current student's props
+                        for(const propName in company){ // for every company property
+                            if (shouldSaveColumns) columns.push({"field": propName, "flex": 1}) // store columns if userIndex is 0
+                            rowObject = {...rowObject, [propName]: company[propName]} // add the prop-value pair
+                        }
+                        if (shouldSaveColumns) setCompaniesUserTableColumns(columns) // save columns
+                        rows.push(rowObject) // store row object
+                    })
+                    setCompaniesUserTableRows(rows) // save rows
                 } else {
                     throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
                 }
@@ -1519,10 +617,11 @@ export default function Companies({ language }: any) {
             setIsLoading(true);
             try {
                 await Promise.all([ // ensures all the calls are finished before proceeding
-                    fetchUsersData(),
+                    fetchCompaniesOverTime(),
                     // fetchCompaniesByIndustryData(),
-                    fetchPostingsByIndustryData(),
-                    fetchPostingsData()
+                    fetchPostingsByIndustry(),
+                    fetchPostingsOverTime(),
+                    fetchCompaniesUserTable()
                 ]);
             } catch (error) {
                 console.error(error); // handle error
@@ -1536,7 +635,7 @@ export default function Companies({ language }: any) {
         [] // empty array for 2nd argument indicates that useEffect will only run once after the initial render, not after re-renders as well
     );
 
-    if (isLoading || usersData === null /*|| companiesByIndustryData === null*/ || postingsByIndustryData === null || postingsData === null) {
+    if (isLoading || companiesOverTimeData === null /*|| companiesByIndustryData === null*/ || postingsByIndustryData === null || postingsOverTimeData === null) {
         return <div>Loading...</div>;
     }
 
@@ -1550,11 +649,11 @@ export default function Companies({ language }: any) {
                     language={language}
                     size={'m'}
                     chartType={"line"}
-                    data={usersData}
+                    data={companiesOverTimeData}
                     color={colors.turquoise}
                     xDataKey={timestampKeyName}
                     yDataKeys={["companies"]}
-                    metric={getLatestValue(usersData, "companies")}
+                    metric={getLatestValue(companiesOverTimeData, "companies")}
                     metricDescription={
                         language === "english" ?
                             "current users" :
@@ -1610,11 +709,11 @@ export default function Companies({ language }: any) {
                     language={language}
                     size={'s'}
                     chartType={"line"}
-                    data={postingsData}
+                    data={postingsOverTimeData}
                     color={colors.green}
                     xDataKey={timestampKeyName}
                     yDataKeys={["total_publications"]}
-                    metric={getLatestValue(postingsData, "total_publications")}
+                    metric={getLatestValue(postingsOverTimeData, "total_publications")}
                     trendChangePercent={''}
                     metricDescription={
                         language === "english" ?
@@ -1626,8 +725,8 @@ export default function Companies({ language }: any) {
                 />
             </Grid>
             <Datatable
-                columns = {companiesTableDummyCols}
-                rows = {companiesTableDummyRows}
+                columns = {companiesUserTableColumns}
+                rows = {companiesUserTableRows}
             />
         </Grid>
     )
