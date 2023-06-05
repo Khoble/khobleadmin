@@ -1,10 +1,11 @@
 import { TextField } from '@mui/material';
 import { makeStyles } from '@mui/styles'
-import { useState } from 'react';
+import { width } from '@mui/system';
+import { ReactNode, useState } from 'react';
 
 const errorColor = "#d88484";
-const focusColor = "inherit" // black or white depending on theme
-const initialLabelColor = "#5c5c5c"
+const focusColor = "initial" // black or white depending on theme
+const initialLabelColor = "#5c5c5c" // has to be hex so that the alpha can be modified
 const initialLabelAlpha = "85"
 
 // Used to override MUI classes:
@@ -39,7 +40,7 @@ const useStyles: any = makeStyles({
     }
 });
 
-export default function KhobleTextField({ helperText, error, label, type }: any) {
+export default function KhobleTextField({ helperText, error, label, type, endAdornment, width}: any) {
     const classes = useStyles();
     const [hasError, setHasError] = useState(error)
 
@@ -53,9 +54,11 @@ export default function KhobleTextField({ helperText, error, label, type }: any)
             type={type}
             InputProps={
                 {
-                    sx: { borderRadius: "100em" /* makes a perfectly round edge*/} 
+                    sx: { borderRadius: "100em" /* makes a perfectly round edge*/},
+                    endAdornment: endAdornment
                 }
             }
+            style={{width: width}}
             onChange={() => setHasError(false)} // remove error class when user changes imput
         />
     );

@@ -3,23 +3,20 @@ import { makeStyles } from '@mui/styles'
 import KhobleTextField from "../atoms/KhobleTextField";
 import { useState } from "react";
 import EnterIcon from '@mui/icons-material/ArrowCircleRightOutlined';
+import React from "react";
 
-const useStyles: any = makeStyles({
-    root: {
-        "& .MuiFormHelperText-root": {
-            color: "coral !important"
-        },
-        "& .MuiOutlinedInput-root.Mui-error": {
-            "& fieldset": {
-                borderColor: "coral",
-                borderRadius: "100px"
-            }
-        }
+const useStyles = makeStyles((theme) => ({
+    item: {
+        border: `1px solid limegreen`,
+    },
+    container: {
+        border: `1px solid magenta`,
     }
-});
+}));
 
 export default function Login({ language }: any) {
     const classes = useStyles();
+
     const [loginErrorMessage, setLoginErrorMessage] = useState(
         language === "english" ?
             "Invalid credentials" :
@@ -37,53 +34,42 @@ export default function Login({ language }: any) {
             minHeight="100vh"
         >
             <Card
-                // variant="outlined"
                 sx={{ minWidth: "50%" }}
             >
-                <CardContent>
-                    <Box
-                        component="form"
-                        autoComplete="off"
-                    >
-                        <Grid
-                            container
-                            direction="column"
-                            justifyContent="center"
-                            alignItems="center"
-                            spacing={1}
-                        >
-                            <Grid item>
-                                <img src="../../../public/isotype_logo.png" width={"150px"}></img>
-                            </Grid>
-                            <Grid item width={"50%"} minWidth={"250px"}>
-                                <KhobleTextField label={
-                                    language === "english" ?
-                                        "Email" :
-                                        language === "español" ?
-                                            "Correo" :
-                                            ""
-                                }
-                                />
-                            </Grid>
-                            <Grid item width={"50%"} minWidth={"250px"}>
-                                <KhobleTextField type={"password"} helperText={loginErrorMessage} label={
-                                    language === "english" ?
-                                        "Password" :
-                                        language === "español" ?
-                                            "Contraseña" :
-                                            ""
-                                }
-                                />
-                            </Grid>
-                            <Grid item>
-                                <IconButton>
-                                    <EnterIcon style={{ color: 'grey' }}/>
-                                </IconButton>
-                            </Grid>
-                        </Grid>
-                    </Box>
+                <CardContent
+                    sx={{ textAlign: "center" }}
+                >
+                    <img src="/isotype_logo.png" width={"150px"}></img>
+                    <div>
+                        <KhobleTextField label={
+                            language === "english" ?
+                                "Email" :
+                                language === "español" ?
+                                    "Correo" :
+                                    ""
+                        }
+                            width="300px"
+                        />
+                    </div>
+                    <div style={{marginTop: "10px"}}>
+                        <KhobleTextField
+                            type={"password"}
+                            helperText={loginErrorMessage}
+                            label={
+                                language === "english" ?
+                                    "Password" :
+                                    language === "español" ?
+                                        "Contraseña" :
+                                        ""
+                            }
+                            width="300px"
+                        />
+                        <IconButton sx={{ position: "absolute", marginTop: "8px" }}>
+                            <EnterIcon style={{ color: "#5c5c5c" }} />
+                        </IconButton>
+                    </div>
                 </CardContent>
             </Card>
-        </Grid>
+        </Grid >
     );
 }
