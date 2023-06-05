@@ -3,7 +3,7 @@ import { makeStyles } from '@mui/styles'
 import KhobleTextField from "../atoms/KhobleTextField";
 import { useState } from "react";
 import EnterIcon from '@mui/icons-material/ArrowCircleRightOutlined';
-import React from "react";
+import { useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     item: {
@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Login({ language }: any) {
-    const classes = useStyles();
+    const navigate = useNavigate();
 
     const [loginErrorMessage, setLoginErrorMessage] = useState(
         language === "english" ?
@@ -39,7 +39,7 @@ export default function Login({ language }: any) {
                 <CardContent
                     sx={{ textAlign: "center" }}
                 >
-                    <img src="/isotype_logo.png" width={"150px"}></img>
+                    <img src="../../../public/isotype_logo.png" width={"150px"}></img>
                     <div>
                         <KhobleTextField label={
                             language === "english" ?
@@ -64,7 +64,10 @@ export default function Login({ language }: any) {
                             }
                             width="300px"
                         />
-                        <IconButton sx={{ position: "absolute", marginTop: "8px" }}>
+                        <IconButton 
+                            sx={{ position: "absolute", marginTop: "8px" }}
+                            onClick={() => {navigate("/general")}}
+                        >
                             <EnterIcon style={{ color: "#5c5c5c" }} />
                         </IconButton>
                     </div>
