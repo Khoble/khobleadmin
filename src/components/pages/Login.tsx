@@ -4,21 +4,15 @@ import KhobleTextField from "../atoms/KhobleTextField";
 import { useState } from "react";
 import EnterIcon from '@mui/icons-material/ArrowCircleRightOutlined';
 import { useNavigate } from 'react-router-dom';
-import KhobleLogo from "../atoms/KhobleLogo"
+import KhobleLogoComponent from "../atoms/KhobleLogo"
 import { useTheme } from '@mui/material/styles';
-
-const useStyles = makeStyles((theme) => ({
-    item: {
-        border: `1px solid limegreen`,
-    },
-    container: {
-        border: `1px solid magenta`,
-    }
-}));
+import KhobleLogoGradient from "../../../public/khoble_logo_darkmode_gradient.svg"
+import KhobleLogo from "../../../public/khoble_magenta_blue_separate_paths.svg"
 
 export default function Login({ language }: any) {
     const navigate = useNavigate();
     const theme = useTheme();
+    const themeIsDark = theme.palette.mode === "dark"
 
     const [loginErrorMessage, setLoginErrorMessage] = useState(
         language === "english" ?
@@ -35,22 +29,25 @@ export default function Login({ language }: any) {
             alignItems="center"
             minWidth="100vw"
             minHeight="100vh"
+            sx={{backgroundColor: `${themeIsDark? "initial" : "white"}`}}
         >
             <Card
+                variant={themeIsDark? "elevation" : "outlined"}
                 sx={{ minWidth: "50%" }}
             >
                 <CardContent
                     sx={{ textAlign: "center" }}
                 >
-                    <KhobleLogo 
+                    {/* <KhobleLogoComponent 
                         width="150" 
-                        strokeColor={ theme.palette.mode === "dark"? "white" : "black" }
+                        strokeColor={ themeIsDark? "white" : "black" }
                         strokeWidth="10" 
                         // leftFill="#d95766"
                         // leftOpacity={0.5}
                         // rightFill="#262640" 
                         // rightOpacity={0.5}
-                        />
+                        /> */}
+                    <img src={themeIsDark? KhobleLogoGradient : KhobleLogo} width="150px"></img>
                     <div>
                         <KhobleTextField label={
                             language === "english" ?

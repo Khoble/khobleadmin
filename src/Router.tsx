@@ -9,7 +9,7 @@ import Companies from './components/pages/SidebarContent/Companies';
 import Students from './components/pages/SidebarContent/Students';
 import Login from './components/pages/Login';
 
-// Determine's global theme: 
+// Determines global theme: 
 const theme = createTheme({
   palette: {
     mode: "dark" // possible to toggle between 'dark' and 'light' themes
