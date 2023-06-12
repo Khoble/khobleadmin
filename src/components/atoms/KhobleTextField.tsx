@@ -2,38 +2,42 @@ import { TextField } from '@mui/material';
 import { ReactNode, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 
-export default function KhobleTextField({ helperText, error, label, type, endAdornment, width }: any) {
+export default function KhobleTextField({ helperText, error, label, type, endAdornment, width, handleTextChange, name, generalColorRBG }: any) {
     // Styling:
     // Variables and constants:
     const themeIsDark = useTheme().palette.mode === "dark";
     const defaultLabelAlpha = 0.5;
     const errorColor = "#d88484";
     const focusColor = themeIsDark ? "white" : "black"; // black or white depending on theme
-    const textFieldRGB = "192, 192, 192"; // RGB value of the initial color of the text field
     // Hooks:
-    const [hasError, setHasError] = useState(error);
     const [labelAlpha, setLabelAlpha] = useState(defaultLabelAlpha);
+
+    // Functions:
+    // Used to trigger 1 or more functions when TextField value changes:
+    function handleChange(event: any) {
+        handleTextChange(event)
+    }
 
     return (
         <TextField
-            error={hasError}
-            onChange={() => setHasError(false)} // remove error class when user changes input
-            onBlur={(event: any) => { // when text field is abandoned
-                setLabelAlpha(event.target.value.length ? 1 : defaultLabelAlpha) // if text field has text, remove all opacity from the label. Otherwise, set the default
-            }}
-            helperText={hasError ? helperText : null}
+            error={error}
+            onChange={(event) => handleChange(event)}
+            helperText={error ? helperText : null}
             // className={classes.root}
             fullWidth={true} // fill width of partent container by default
             label={label}
             type={type}
+            name={name}
+            onBlur={(event: any) => { // when text field is abandoned
+                setLabelAlpha(event.target.value.length ? 1 : defaultLabelAlpha) // if text field has text, remove all opacity from the label. Otherwise, set the default
+            }}
             sx={{
                 width: width, // width specified in props
-                // input: { cursor: 'pointer' }, // make pointer cursor when hovered
                 // MUI class overrides:
                 // Border color:
                 "& .MuiOutlinedInput-root": {
                     "& fieldset": {
-                        borderColor: `rgb(${textFieldRGB})`
+                        borderColor: `rgb(${generalColorRBG})`
                     }
                 },
                 // Border color on error:
@@ -44,7 +48,7 @@ export default function KhobleTextField({ helperText, error, label, type, endAdo
                 },
                 // Initial label color (before floating upwards) on regular case and on error:
                 "& .MuiFormLabel-root, .MuiFormLabel-root.Mui-error": {
-                    color: `rgba(${textFieldRGB},${labelAlpha})`
+                    color: `rgba(${generalColorRBG},${labelAlpha})`
                 },
                 // Label text color on focus (also works on hover):
                 "& .MuiFormLabel-root.Mui-focused": {
@@ -61,17 +65,17 @@ export default function KhobleTextField({ helperText, error, label, type, endAdo
                 // Pulsating animation on hover:
                 "@keyframes pulsatingBorder": {
                     "0%": {
-                        borderColor: `rgb(${textFieldRGB})`
+                        borderColor: `rgba(${generalColorRBG},0.2)`
                     },
                     "50%": {
                         borderColor: focusColor
                     },
                     "100%": {
-                        borderColor: `rgb(${textFieldRGB})`
+                        borderColor: `rgba(${generalColorRBG},0.2)`
                     }
                 },
                 // On focus
-                "& .MuiOutlinedInput-root.Mui-focused": {
+                "& .MuiOutlinedInput-root.Mui-focused, .MuiOutlinedInput-root.Mui-error.Mui-focused": {
                     // Border:
                     "& fieldset": {
                         borderColor: focusColor,
@@ -83,13 +87,17 @@ export default function KhobleTextField({ helperText, error, label, type, endAdo
                 "& .MuiFormHelperText-root": {
                     color: errorColor + " !important"
                 },
-                // Cursor:
                 input: {
+                    // Cursor:
                     "&:hover": {
                         cursor: "pointer"
                     },
                     "&:focus": {
                         cursor: "text"
+                    },
+                    // On autofill:
+                    "&:-webkit-autofill": {
+                        WebkitBoxShadow: "0 0 0 1000px transparent inset" // add transparency to autofill background color override
                     }
                 }
             }}
