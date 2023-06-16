@@ -20,6 +20,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import DataUsageIcon from '@mui/icons-material/DataUsage';
 import BusinessIcon from '@mui/icons-material/Business';
 import SchoolIcon from '@mui/icons-material/School';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const drawerWidth = 240;
 
@@ -100,7 +101,7 @@ export default function Sidebar({ language, renderedContent }: any) {
     const { pathname } = useLocation();
 
     // Constants and variables:
-    
+
     // Toggles drawer between close and open states:
     const toggleDrawer = () => {
         setOpen(!open)
@@ -113,31 +114,31 @@ export default function Sidebar({ language, renderedContent }: any) {
         {
             icon: DataUsageIcon,
             drawerLabel:
-                language === "english" ? 
+                language === "english" ?
                     "General" :
-                language === "español" ? 
-                    "Generales" :
-                "",
+                    language === "español" ?
+                        "Generales" :
+                        "",
             navigateTo: "general"
         },
         {
             icon: BusinessIcon,
             drawerLabel:
-                language === "english" ? 
-                    "Companies" : 
-                language === "español" ? 
-                    "Compañías" :
-                "",
+                language === "english" ?
+                    "Companies" :
+                    language === "español" ?
+                        "Compañías" :
+                        "",
             navigateTo: "companies"
         },
         {
             icon: SchoolIcon,
             drawerLabel:
-                language === "english" ? 
+                language === "english" ?
                     "Students" :
-                language === "español" ? 
-                    "Estudiantes" :
-                "",
+                    language === "español" ?
+                        "Estudiantes" :
+                        "",
             navigateTo: "students"
         }
     ]; // Contains the configuration of the sidebar
@@ -154,6 +155,12 @@ export default function Sidebar({ language, renderedContent }: any) {
         return tabUrl === pathname // where 'pathname' is the current browser url
     }
 
+    // Logs user out:
+    function logOut() {
+        localStorage.removeItem('user') // remove user info from browser
+        navigate("/login") // redirect to login page
+    }
+
     // Returns the current tab's label and creates an array that contains the list items that correspond to the sidebar tabs:
     function getCurrentTabLabel() {
         var tabLabel = "";
@@ -161,7 +168,7 @@ export default function Sidebar({ language, renderedContent }: any) {
         for (const [index, sidebarTab] of sidebarConfig.entries()) {
             // Check to see if current tab should be selected:
             let shouldSelectTab = shouldSelect(sidebarTab);
-            
+
             // Create the ListItem (sidebar tab component):
             let currentListItem =
                 <ListItem
@@ -191,16 +198,16 @@ export default function Sidebar({ language, renderedContent }: any) {
                         <ListItemText primary={sidebarTab.drawerLabel} sx={{ opacity: open ? 1 : 0 }} />
                     </ListItemButton>
                 </ListItem>
-            
+
             // // Assign the tab label based on language:
-            if (shouldSelectTab) tabLabel = 
+            if (shouldSelectTab) tabLabel =
                 // language === "english" ? 
                 //     sidebarTab.drawerLabel + " KPIs" :
                 // language === "español" ? 
                 //     "KPIs " + sidebarTab.drawerLabel.toLowerCase() :
                 // ""
                 tabLabel = sidebarTab.drawerLabel
-        
+
             // Store the list item:
             listItemArray.push(currentListItem);
         }
@@ -225,9 +232,17 @@ export default function Sidebar({ language, renderedContent }: any) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div">
+                    <Typography
+                        variant="h6"
+                        noWrap
+                        component="div"
+                        sx={{flexGrow: 1}}
+                    >
                         {getCurrentTabLabel()}
                     </Typography>
+                    <IconButton onClick={logOut}>
+                        <LogoutIcon />
+                    </IconButton>
                 </Toolbar>
             </AppBar>
             <Drawer variant="permanent" open={open}>

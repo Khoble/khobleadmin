@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardContent, Grid, Box, TextField, IconButton } from "@mui/material";
+import { Card, CardHeader, CardContent, Grid, Box, TextField, IconButton, InputAdornment } from "@mui/material";
 import { makeStyles } from '@mui/styles'
 import KhobleTextField from "../atoms/KhobleTextField";
 import { useEffect, useState } from "react";
@@ -33,6 +33,18 @@ export default function Login({ language }: any) {
     const [allTextFieldsHaveValues, setAllTextFieldsHaveValues] = useState(false)
     const [enterButtonAlphaValue, setEnterButtonAlphaValue] = useState(0.2)
     const [textFieldHasError, setTextFieldHasError] = useState(false)
+
+    // Redirects user to home page if session was already active:
+    useEffect(() => {
+        if (localStorage.getItem('user')) { // User was already logged in
+            navigate(
+                '/', // redirect to home page
+                { replace: true } // removes login page from history, preventing user from accidentally navigating back to the login page
+            );
+        }
+    },
+        [] // empty brackets indicate that it will only run once upon rendering
+    )
     
     // Triggers code when 'textFieldValues' changes:
     useEffect(() => {
@@ -75,7 +87,8 @@ export default function Login({ language }: any) {
             const data = await response.data;
             if (data.ok) {
                 // Credetials are valid:
-                navigate("/general")
+                localStorage.setItem('user', JSON.stringify(data.user)) // save user info in browser
+                navigate("/general", { replace: true })
             }
         } catch (error: any) {
             // Credentials are invalid:
@@ -129,7 +142,7 @@ export default function Login({ language }: any) {
                     <div style={{ marginTop: "10px" }}>
                         <KhobleTextField
                             error={textFieldHasError}
-                            type={"password"}
+                            type="password"
                             helperText={loginErrorMessage}
                             width="300px"
                             name="password"

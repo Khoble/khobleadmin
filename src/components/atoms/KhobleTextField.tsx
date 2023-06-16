@@ -1,6 +1,8 @@
-import { TextField } from '@mui/material';
-import { ReactNode, useState } from 'react';
+import { IconButton, InputAdornment, TextField } from '@mui/material';
+import { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
+import VisibilityOnIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 export default function KhobleTextField({ helperText, error, label, type, endAdornment, width, handleTextChange, name, generalColorRBG }: any) {
     // Styling:
@@ -11,6 +13,7 @@ export default function KhobleTextField({ helperText, error, label, type, endAdo
     const focusColor = themeIsDark ? "white" : "black"; // black or white depending on theme
     // Hooks:
     const [labelAlpha, setLabelAlpha] = useState(defaultLabelAlpha);
+    const [showPassword, setShowPassword] = useState(false) // used to toggle the password text field type
 
     // Functions:
     // Used to trigger 1 or more functions when TextField value changes:
@@ -23,10 +26,13 @@ export default function KhobleTextField({ helperText, error, label, type, endAdo
             error={error}
             onChange={(event) => handleChange(event)}
             helperText={error ? helperText : null}
-            // className={classes.root}
             fullWidth={true} // fill width of partent container by default
             label={label}
-            type={type}
+            type={ // If type was specified as password, it will be toggled between text and password with the visibility icon. Any other type will just be applied:
+                type==="password"? 
+                    showPassword? "text" : "password"
+                : type
+            }
             name={name}
             onBlur={(event: any) => { // when text field is abandoned
                 setLabelAlpha(event.target.value.length ? 1 : defaultLabelAlpha) // if text field has text, remove all opacity from the label. Otherwise, set the default
@@ -107,7 +113,21 @@ export default function KhobleTextField({ helperText, error, label, type, endAdo
                     sx: {
                         borderRadius: "100em", /* makes a perfectly round edge*/
                     },
-                    endAdornment: endAdornment // icon/button displayed at the inner right of the textfield
+                    endAdornment: type === "password" ?
+                        (
+                            < InputAdornment position="end" >
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={() => { setShowPassword(!showPassword) }}
+                                    // onMouseDown={handleMouseDownPassword}
+                                    edge="end"
+                                    sx={{ color: "grey" }}
+                                >
+                                    {showPassword ? <VisibilityOffIcon /> : <VisibilityOnIcon />}
+                                </IconButton>
+                            </InputAdornment>
+                        )
+                        : endAdornment // icon/button displayed at the inner right of the textfield
                 }
             }
         />
