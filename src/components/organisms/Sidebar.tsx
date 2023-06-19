@@ -253,35 +253,6 @@ export default function Sidebar({ language, renderedContent }: any) {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    {/* {sidebarConfig.map((sidebarTab: any, index: Number) => (
-                        <ListItem
-                            key={index.toString()}
-                            disablePadding
-                            sx={{ display: 'block' }}
-                            aria-label={sidebarTab.drawerLabel}
-                            onClick={() => { navigate("/" + sidebarTab.navigateTo) }}
-                        >
-                            <ListItemButton
-                                sx={{
-                                    minHeight: 48,
-                                    justifyContent: open ? 'initial' : 'center',
-                                    px: 2.5
-                                }}
-                                selected={shouldSelect(sidebarTab)}
-                            >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: open ? 3 : 'auto',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    {<sidebarTab.icon />}
-                                </ListItemIcon>
-                                <ListItemText primary={sidebarTab.drawerLabel} sx={{ opacity: open ? 1 : 0 }} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))} */}
                     {listItemArray}
                 </List>
             </Drawer>
