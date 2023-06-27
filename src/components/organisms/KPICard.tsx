@@ -76,7 +76,7 @@ export default function KPICard({ language, size, chartType, data, title, color,
             break;
         default:
             // Any other chart type:
-            if (metric !== undefined ) metric = metric.toLocaleString() // format metric as number (commas, decimals, etc.)
+            if (metric) metric = metric.toLocaleString() // format metric as number (commas, decimals, etc.)
     }
 
     // Create trending icon component depending on slope:

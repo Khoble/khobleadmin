@@ -157,7 +157,7 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
     // Configuration by chart type:
     // Common procedures:
     switch (chartType) {
-        // Using fallthrough):
+        // (Using fallthrough):
         case "bar":
         case "line":
             // Shared props:

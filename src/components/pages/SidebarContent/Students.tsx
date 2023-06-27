@@ -18,10 +18,11 @@ const colors = {
 // Functions:
 // Get latest value of a data set given a key
 function getLatestValue(data: any, key: any) {
-    let object = data[data.length - 1];
-    let value = object[key]
-
-    return value;
+    if (data.length > 0) {
+        let object = data[data.length - 1];
+        return object[key]
+    }
+    return null; // (if data is null)
 }
 // Get sum of values of a data set given a key
 function getSumOfValues(data: any, key: any) {

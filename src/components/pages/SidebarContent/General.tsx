@@ -102,10 +102,11 @@ const dummyHiredData = [
 // Functions:
 // Get latest value of a data set given a key
 function getLatestValue(data: any, key: any) {
-    let object = data[data.length - 1];
-    let value = object[key]
-
-    return value;
+    if (data.length > 0) {
+        let object = data[data.length - 1];
+        return object[key]
+    }
+    return null; // (if data is null)
 }
 
 export default function General({ language }: any) {
@@ -124,6 +125,7 @@ export default function General({ language }: any) {
             try {
                 const response = await khobleAPI.get("/dashboard/general"); // make API call
                 const rawData = await response.data; // extract data
+                console.log(rawData)
                 if (rawData) { // if property was found
                     // Handle hired data:
                     setHiredData(rawData.proposals);
