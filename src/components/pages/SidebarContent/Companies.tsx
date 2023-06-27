@@ -522,7 +522,6 @@ export default function Companies({ language }: any) {
     const [companiesUserTableRows, setCompaniesUserTableRows] = useState<any>(null);
     const [companiesUserTableColumns, setCompaniesUserTableColumns] = useState<any>(null);
     const timestampKeyName = "timestamp"; // the name of the key that has to do with timestamps in the objects from the API responses
-    const responseProperty = "data" // the name of the data property in the API responses
 
     const [isLoading, setIsLoading] = useState(true) // true by default to display the wrapper until the API calls are done
 
@@ -531,11 +530,11 @@ export default function Companies({ language }: any) {
         const fetchCompaniesOverTime = async () => {
             try {
                 const response = await khobleAPI.get("/dashboard/company/registered-in-time"); // make API call
-                const rawData = await response[responseProperty]; // extract property
+                const rawData = await response.data; // extract data
                 if (rawData) { // if property was found
                     setCompaniesOverTimeData(rawData.companiesRegisteredInTime);
                 } else {
-                    throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+                    throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
                 }
             } catch (error) {
                 console.error(error); // raise error explaining inability to connect to the endpoint 
@@ -560,11 +559,11 @@ export default function Companies({ language }: any) {
         const fetchPostingsByIndustry = async () => {
             try {
                 const response = await khobleAPI.get("/dashboard/company/publications-by-industries"); // make API call
-                const rawData = await response[responseProperty]; // extract property
+                const rawData = await response.data; // extract data
                 if (rawData) { // if property was found
                     setPostingsByIndustryData(rawData.publicationsByIndustry);
                 } else {
-                    throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+                    throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
                 }
             } catch (error) {
                 console.error(error); // raise error explaining inability to connect to the endpoint 
@@ -574,11 +573,11 @@ export default function Companies({ language }: any) {
         const fetchPostingsOverTime = async () => {
             try {
                 const response = await khobleAPI.get("/dashboard/company/publications-in-time"); // make API call
-                const rawData = await response[responseProperty]; // extract property
+                const rawData = await response.data; // extract data
                 if (rawData) { // if property was found
                     setPostingsOverTimeData(rawData.publicationsInTime);
                 } else {
-                    throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+                    throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
                 }
             } catch (error) {
                 console.error(error); // raise error explaining inability to connect to the endpoint 

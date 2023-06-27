@@ -114,7 +114,6 @@ export default function General({ language }: any) {
     const [hiredData, setHiredData] = useState<any>(null);
     const [matchedData, setMatchedData] = useState<any>(null);
     const timestampKeyName = "timestamp"; // the name of the key that has to do with timestamps in the objects from the API responses
-    const responseProperty = "data" // the name of the data property in the API responses
 
     const [isLoading, setIsLoading] = useState(true) // true by default to display the wrapper until the API calls are done
 
@@ -124,7 +123,7 @@ export default function General({ language }: any) {
         const fetchAllData = async () => {
             try {
                 const response = await khobleAPI.get("/dashboard/general"); // make API call
-                const rawData = await response[responseProperty]; // extract property
+                const rawData = await response.data; // extract data
                 if (rawData) { // if property was found
                     // Handle hired data:
                     setHiredData(rawData.proposals);
@@ -143,7 +142,7 @@ export default function General({ language }: any) {
                         ]
                     );
                 } else {
-                    throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+                    throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
                 }
             } catch (error) {
                 console.error(error); // raise error explaining inability to connect to the endpoint 

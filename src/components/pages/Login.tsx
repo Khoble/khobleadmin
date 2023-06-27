@@ -36,7 +36,7 @@ export default function Login({ language }: any) {
 
     // Redirects user to home page if session was already active:
     useEffect(() => {
-        if (localStorage.getItem('user')) { // User was already logged in
+        if (localStorage.getItem("khoble-session")) { // User was already logged in
             navigate(
                 '/', // redirect to home page
                 { replace: true } // removes login page from history, preventing user from accidentally navigating back to the login page
@@ -45,7 +45,7 @@ export default function Login({ language }: any) {
     },
         [] // empty brackets indicate that it will only run once upon rendering
     )
-    
+
     // Triggers code when 'textFieldValues' changes:
     useEffect(() => {
         handleEnterButtonStyles()
@@ -87,7 +87,7 @@ export default function Login({ language }: any) {
             const data = await response.data;
             if (data.ok) {
                 // Credetials are valid:
-                localStorage.setItem('user', JSON.stringify(data.user)) // save user info in browser
+                localStorage.setItem("khoble-session", data.token) // save user jwt in browser
                 navigate("/general", { replace: true })
             }
         } catch (error: any) {
@@ -117,7 +117,7 @@ export default function Login({ language }: any) {
                         width="150" 
                         strokeColor={ themeIsDark? "white" : "black" }
                         strokeWidth="10" 
-                        // leftFill="#d95766"
+                        // leftFill="#da5766"
                         // leftOpacity={0.5}
                         // rightFill="#262640" 
                         // rightOpacity={0.5}

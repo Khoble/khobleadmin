@@ -1,6 +1,5 @@
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -21,29 +20,9 @@ import DataUsageIcon from '@mui/icons-material/DataUsage';
 import BusinessIcon from '@mui/icons-material/Business';
 import SchoolIcon from '@mui/icons-material/School';
 import LogoutIcon from '@mui/icons-material/Logout';
+import Drawer from '@mui/material/Drawer';
 
 const drawerWidth = 240;
-
-const openedMixin = (theme: Theme): CSSObject => ({
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-    }),
-    overflowX: 'hidden',
-});
-
-const closedMixin = (theme: Theme): CSSObject => ({
-    transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: 'hidden',
-    width: `calc(${theme.spacing(7)} + 1px)`,
-    [theme.breakpoints.up('sm')]: {
-        width: `calc(${theme.spacing(8)} + 1px)`,
-    },
-});
 
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
@@ -67,49 +46,24 @@ const AppBar = styled(MuiAppBar, {
         duration: theme.transitions.duration.leavingScreen,
     }),
     ...(open && {
-        marginLeft: drawerWidth,
+        marginLeft: `${drawerWidth}px`,
         width: `calc(100% - ${drawerWidth}px)`,
         transition: theme.transitions.create(['width', 'margin'], {
-            easing: theme.transitions.easing.sharp,
+            easing: theme.transitions.easing.easeOut,
             duration: theme.transitions.duration.enteringScreen,
         }),
     }),
 }));
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-    ({ theme, open }) => ({
-        width: drawerWidth,
-        flexShrink: 0,
-        whiteSpace: 'nowrap',
-        boxSizing: 'border-box',
-        ...(open && {
-            ...openedMixin(theme),
-            '& .MuiDrawer-paper': openedMixin(theme),
-        }),
-        ...(!open && {
-            ...closedMixin(theme),
-            '& .MuiDrawer-paper': closedMixin(theme),
-        }),
-    }),
-);
-
 export default function Sidebar({ language, renderedContent }: any) {
     // Hooks:
-    const theme = useTheme();
-    const [open, setOpen] = useState(false);
-    const navigate = useNavigate();
-    const { pathname } = useLocation();
+    const navigate = useNavigate(); // used for page navigation
+    const theme = useTheme(); // the global theme
+    const { pathname } = useLocation(); // used to get current page
+    const [drawerIsOpen, setDrawerIsOpen] = useState(false) // used to manage the opening/closing of the drawer
+    const [appbarTitle, setAppbarTitle] = useState("")
 
     // Constants and variables:
-
-    // Toggles drawer between close and open states:
-    const toggleDrawer = () => {
-        setOpen(!open)
-    };
-
-    // Used to store and render the sidebar tabs:
-    var listItemArray: JSX.Element[] = [];
-
     const sidebarConfig = [
         {
             icon: DataUsageIcon,
@@ -143,91 +97,121 @@ export default function Sidebar({ language, renderedContent }: any) {
         }
     ]; // Contains the configuration of the sidebar
 
+    // const getAppbarTitle = ()
+
 
     // Functions:
-    // Used to highlight sidebar tab that corresponds to the current view, and additionally sets the appbar label:
+    // Used to highlight sidebar tab that corresponds to the current view:
     function shouldSelect(currentSidebarTab: any) {
-        var tabUrl = currentSidebarTab.navigateTo;
-
-        // Add slash at the beginning of 'tabUrl'
-        tabUrl = '/' + tabUrl;
-
+        var tabUrl = '/' + currentSidebarTab.navigateTo; // add slash at the beginning of 'tabUrl'
         return tabUrl === pathname // where 'pathname' is the current browser url
     }
 
     // Logs user out:
     function logOut() {
-        localStorage.removeItem('user') // remove user info from browser
+        localStorage.removeItem("khoble-session") // remove user jwt from browser
         navigate("/login") // redirect to login page
     }
 
-    // Returns the current tab's label and creates an array that contains the list items that correspond to the sidebar tabs:
-    function getCurrentTabLabel() {
-        var tabLabel = "";
+    // Toggles drawer between close and open states:
+    const toggleDrawer =
+        (isOpen: boolean) =>
+            (event: React.KeyboardEvent | React.MouseEvent) => {
+                if (
+                    event.type === 'keydown' &&
+                    ((event as React.KeyboardEvent).key === 'Tab' ||
+                        (event as React.KeyboardEvent).key === 'Shift')
+                ) {
+                    return;
+                }
 
-        for (const [index, sidebarTab] of sidebarConfig.entries()) {
-            // Check to see if current tab should be selected:
-            let shouldSelectTab = shouldSelect(sidebarTab);
+                setDrawerIsOpen(isOpen);
+            };
 
-            // Create the ListItem (sidebar tab component):
-            let currentListItem =
-                <ListItem
-                    key={index.toString()}
-                    disablePadding
-                    sx={{ display: 'block' }}
-                    aria-label={sidebarTab.drawerLabel}
-                    onClick={() => { navigate("/" + sidebarTab.navigateTo) }}
-                >
+    // The tab list inside the drawer:
+    const drawerContent = (
+        <Box
+            role="presentation"
+            onClick={toggleDrawer(false)}
+            onKeyDown={toggleDrawer(false)}
+        >
+            <List>
+                {sidebarConfig.map((drawerTab, index) => (
+                    <ListItem
+                        key={`drawer-tab-${index}`}
+                        disablePadding
+                        aria-label={`${drawerTab.drawerLabel} drawer tab`}
+                        onClick={() => { navigate("/" + drawerTab.navigateTo) }}
+                        sx={{ display: 'block' }}
+                    >
+                        <ListItemButton
+                            sx={{
+                                minHeight: 48,
+                                justifyContent: drawerIsOpen ? 'initial' : 'center',
+                                px: 2.5,
+                            }}
+                            selected={shouldSelect(drawerTab)}
+                        >
+                            <ListItemIcon
+                                sx={{
+                                    minWidth: 0,
+                                    mr: drawerIsOpen ? 3 : 'auto',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                {<drawerTab.icon />}
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={drawerTab.drawerLabel}
+                                sx={{ opacity: drawerIsOpen ? 1 : 0 }}
+                            />
+                        </ListItemButton>
+                    </ListItem>
+                ))}
+            </List>
+            <Divider />
+            <List>
+                <ListItem disablePadding>
                     <ListItemButton
+                        onClick={logOut}
                         sx={{
                             minHeight: 48,
-                            justifyContent: open ? 'initial' : 'center',
-                            px: 2.5
+                            justifyContent: drawerIsOpen ? 'initial' : 'center',
+                            px: 2.5,
                         }}
-                        selected={shouldSelectTab}
                     >
                         <ListItemIcon
                             sx={{
                                 minWidth: 0,
-                                mr: open ? 3 : 'auto',
+                                mr: drawerIsOpen ? 3 : 'auto',
                                 justifyContent: 'center',
                             }}
                         >
-                            {<sidebarTab.icon />}
+                            <LogoutIcon />
                         </ListItemIcon>
-                        <ListItemText primary={sidebarTab.drawerLabel} sx={{ opacity: open ? 1 : 0 }} />
+                        <ListItemText primary={"Log Out"} />
                     </ListItemButton>
                 </ListItem>
-
-            // // Assign the tab label based on language:
-            if (shouldSelectTab) tabLabel =
-                // language === "english" ? 
-                //     sidebarTab.drawerLabel + " KPIs" :
-                // language === "español" ? 
-                //     "KPIs " + sidebarTab.drawerLabel.toLowerCase() :
-                // ""
-                tabLabel = sidebarTab.drawerLabel
-
-            // Store the list item:
-            listItemArray.push(currentListItem);
-        }
-
-        return tabLabel;
-    }
+            </List>
+        </Box>
+    );
 
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <AppBar position="fixed" open={open}>
+            <AppBar
+                position="fixed"
+                open={drawerIsOpen}
+            >
                 <Toolbar>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
-                        onClick={toggleDrawer}
+                        onClick={toggleDrawer(true)}
                         edge="start"
                         sx={{
                             marginRight: 5,
-                            ...(open && { display: 'none' }),
+                            ...(drawerIsOpen && { display: 'none' }),
                         }}
                     >
                         <MenuIcon />
@@ -236,27 +220,37 @@ export default function Sidebar({ language, renderedContent }: any) {
                         variant="h6"
                         noWrap
                         component="div"
-                        sx={{flexGrow: 1}}
+                    // sx={{ flexGrow: 1 }}
                     >
-                        {getCurrentTabLabel()}
+                        {/* {getAppbarTitle} */}
                     </Typography>
-                    <IconButton onClick={logOut}>
-                        <LogoutIcon />
-                    </IconButton>
                 </Toolbar>
             </AppBar>
-            <Drawer variant="permanent" open={open}>
+            <Drawer
+                anchor="left"
+                open={drawerIsOpen}
+                onClose={toggleDrawer(false)}
+                sx={{
+                    width: drawerWidth,
+                    flexShrink: 0,
+                    '& .MuiDrawer-paper': {
+                        width: drawerWidth,
+                        boxSizing: 'border-box',
+                    },
+                }}
+            >
                 <DrawerHeader>
-                    <IconButton onClick={toggleDrawer}>
-                        {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                    <IconButton onClick={toggleDrawer(!drawerIsOpen)}>
+                        {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
-                <List>
-                    {listItemArray}
-                </List>
+                {drawerContent}
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Box
+                component="main"
+                sx={{ flexGrow: 1, p: 3 }}
+            >
                 <DrawerHeader />
                 {renderedContent}
             </Box>

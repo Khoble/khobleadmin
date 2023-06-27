@@ -327,7 +327,6 @@ export default function Students({ language }: any) {
     const [studentsTableRows, setStudentsTableRows] = useState<any>(null);
     const [studentsTableColumns, setStudentsTableColumns] = useState<any>(null);
     const timestampKeyName = "timestamp"; // the name of the key that has to do with timestamps in the objects from the API responses
-    const responseProperty = "data" // the name of the data property in the API responses
 
     const [isLoading, setIsLoading] = useState(true) // true by default to display the wrapper until the API calls are done
 
@@ -346,12 +345,12 @@ export default function Students({ language }: any) {
         const fetchStudentsOverTime = async () => {
             try {
                 const response = await khobleAPI.get("/dashboard/student/registered-in-time"); // make API call
-                const rawData = await response[responseProperty]; // extract property
+                const rawData = await response.data; // extract data
                 if (rawData) { // if property was found
                     let myData = rawData.studentsRegisteredInTime;
                     setStudentsOverTime(myData);
                 } else {
-                    throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+                    throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
                 }
             } catch (error) {
                 console.error(error); // raise error explaining inability to connect to the endpoint 
