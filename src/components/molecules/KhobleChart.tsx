@@ -1,9 +1,9 @@
-import { LineChart, Line, Bar, BarChart, CartesianGrid, PieChart, Pie, Cell, Tooltip, YAxis, XAxis, Brush } from 'recharts';
+import { LineChart, Line, Bar, BarChart, CartesianGrid, PieChart, Pie, Cell, Tooltip, YAxis, XAxis, Brush, ResponsiveContainer } from 'recharts';
 import KhobleChartTooltip from '../atoms/KhobleChartTooltip';
 import { useEffect, useRef, useState } from 'react';
 import KhobleChartAxisTick from '../atoms/KhobleChartXAxisTick';
 
-export default function KhobleChart({ size, chartType, color, xDataKey, yDataKeys, data, configColor }: any) {
+export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, data, configColor, simplified, gradientOverlay }: any) {
     // Constants and variables:
 
     // Dynamic components:
@@ -21,18 +21,15 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
     var L2ComponentProps = {};
 
     // Values used to manage changes in the chart brush:
-    const defaultNumberOfXAxisTicks = 12; 
+    const defaultNumberOfXAxisTicks = 12;
     const [brushStartIndex, setBrushStartIndex] = useState(0); // where the leftmost end of the brush will start (0 by default)
     const [brushEndIndex, setBrushEndIndex] = useState( //  where the leftmost end of the brush will end
-        data.length < defaultNumberOfXAxisTicks? // if there are less data points than default number of x-axis ticks to show
-            data.length-1 : // the last index of the data array
+        data.length < defaultNumberOfXAxisTicks ? // if there are less data points than default number of x-axis ticks to show
+            data.length - 1 : // the last index of the data array
             defaultNumberOfXAxisTicks - 1
     ); // Brush end-index falls on the last data element of the default range (numerOfDefaultXAxisTcks)
 
     // Sizing variables:
-    var L1ComponentWidth = 275;
-    var L1ComponentHeight = 80;
-    var scaleFactor; // How much the chart dimensions should grow
     const componentWidthRef = useRef<any>(null); // Reference used to used to extract a component's current width
     const [currentTickWidth, setCurrentTickWidth] = useState(0); // The value of the width of the x-axis labels (ticks) used to prevent text overlapping
     const updateXAxisTickWidth = () => { // Triggered whenever resizing ocurrs or the brush changes
@@ -61,96 +58,73 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
 
     });
 
-    // Configuration by size:
-    switch (size) {
-        case 's':
-            return null; // Render nothing for small cards
-
-        case 'm':
-            // Sizing:
-            scaleFactor = 1;
-            break;
-        case 'l':
-            // Sizing:
-            scaleFactor = 3.2;
-
-            // Props:
-            L2ComponentProps = {
-                ...L2ComponentProps, ...{
-                    ref: componentWidthRef // Add reference to be able to extract it's current width
-                }
+    // Configuration by detail:
+    if (!simplified) {
+        // Props:
+        L2ComponentProps = {
+            ...L2ComponentProps, ...{
+                ref: componentWidthRef // Add reference to be able to extract it's current width
             }
+        }
 
-            // Chart configuration:
+        // Chart configuration:
+        configurationComponents.push(
+            // Add tooltip:
+            // <Tooltip 
+            //     content={<KhobleChartTooltip />} 
+            //     key={"tooltip"}
+            //     cursor={{ fill: configColor }} 
+            // />,
+
+            <CartesianGrid
+                key={"cartesianGrid"}
+                strokeDasharray='3 3'
+                stroke={configColor + 25} // 25% opacity on top
+            />,
+
+            // Add y-axis:
+            <YAxis
+                key={"y-axis"}
+                stroke={configColor}
+            />,
+
+            // Add x-axis:
+            <XAxis
+                key={"x-axis"}
+                dataKey={xDataKey}
+                interval={0} // Will not remove x-axis ticks that don't fit
+                tick={
+                    <KhobleChartAxisTick
+                        textColor={configColor}
+                        tickWidth={currentTickWidth}
+                    />
+                }
+            />
+        );
+
+        // Add brush if data has more than 1 data point:
+        if (data.length > 1) {
+            // console.log("["+brushStartIndex+","+brushEndIndex+"]");
             configurationComponents.push(
-                // Add tooltip:
-                // <Tooltip 
-                //     content={<KhobleChartTooltip />} 
-                //     key={"tooltip"}
-                //     cursor={{ fill: configColor }} 
-                // />,
-
-                <CartesianGrid
-                    key={"cartesianGrid"}
-                    strokeDasharray='3 3'
-                    stroke={configColor + 25} // 25% opacity on top
-                />,
-
-                // Add y-axis:
-                <YAxis
-                    key={"y-axis"}
-                    stroke={configColor}
-                />,
-
-                // Add x-axis:
-                <XAxis
-                    key={"x-axis"}
+                <Brush
+                    key={"brush"}
                     dataKey={xDataKey}
-                    interval={0} // Will not remove x-axis ticks that don't fit
-                    tick={
-                        <KhobleChartAxisTick
-                            textColor={configColor}
-                            tickWidth={currentTickWidth}
-                        />
-                    }
+                    height={30}
+                    stroke={color}
+                    fill='transparent' // No background
+                    tickFormatter={() => ("")} // No text labels on the horizontal ends
+                    startIndex={brushStartIndex}
+                    endIndex={brushEndIndex}
+                    onChange={(brush) => {
+                        // Update brush start and end indices:
+                        if (brush.startIndex != undefined && brush.endIndex != undefined) {
+                            setBrushStartIndex(brush.startIndex);
+                            setBrushEndIndex(brush.endIndex);
+                            // The previous 2 lines will trigger x-axis tick text adjustment, since such props are used in the 'updateXAxisTickWidth' function
+                        }
+                    }}
                 />
             );
-
-            // Add brush if data has more than 1 data point:
-            if (data.length > 1) {
-                // console.log("["+brushStartIndex+","+brushEndIndex+"]");
-                configurationComponents.push(
-                    <Brush
-                        key={"brush"}
-                        dataKey={xDataKey}
-                        height={30}
-                        stroke={color}
-                        fill='transparent' // No background
-                        tickFormatter={() => ("")} // No text labels on the horizontal ends
-                        startIndex={brushStartIndex}
-                        endIndex={brushEndIndex}
-                        onChange={(brush) => {
-                            // Update brush start and end indices:
-                            if (brush.startIndex != undefined && brush.endIndex != undefined) {
-                                setBrushStartIndex(brush.startIndex);
-                                setBrushEndIndex(brush.endIndex);
-                                // The previous 2 lines will trigger x-axis tick text adjustment, since such props are used in the 'updateXAxisTickWidth' function
-                            }
-                        }}
-                    />
-                );
-            }
-
-            break;
-        default:
-            return null;
-    }
-
-    // Creation of parent component props:
-    L1ComponentProps = {
-        ...L1ComponentProps, ...{
-            height: L1ComponentHeight * scaleFactor,
-            width: L1ComponentWidth * scaleFactor
         }
     }
 
@@ -220,8 +194,8 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
                     cy: "100%",
                     startAngle: 180,
                     endAngle: 0,
-                    innerRadius: 72 * scaleFactor,
-                    outerRadius: 74 * scaleFactor,
+                    innerRadius: "98%",
+                    outerRadius: "100%",
                     paddingAngle: 0,
                 }
             }
@@ -265,9 +239,17 @@ export default function KhobleChart({ size, chartType, color, xDataKey, yDataKey
     });
 
     return (
-        <L1ComponentLabel {...L1ComponentProps}>
-            {configurationComponents}
-            {L2Components}
-        </L1ComponentLabel>
+        <div style={{
+            width: "100%",
+            height: "100%",
+            ...(gradientOverlay && {background: "linear-gradient(to bottom, " + color + "25" + " -5%, #00000000 80%)"}), // apply gradient on top of chart if requested in props
+        }}>
+            <ResponsiveContainer>
+                <L1ComponentLabel {...L1ComponentProps}>
+                    {configurationComponents}
+                    {L2Components}
+                </L1ComponentLabel>
+            </ResponsiveContainer>
+        </div>
     );
 }

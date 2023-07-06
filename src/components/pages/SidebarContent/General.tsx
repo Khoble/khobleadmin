@@ -125,7 +125,6 @@ export default function General({ language }: any) {
             try {
                 const response = await khobleAPI.get("/dashboard/general"); // make API call
                 const rawData = await response.data; // extract data
-                console.log(rawData)
                 if (rawData) { // if property was found
                     // Handle hired data:
                     setHiredData(rawData.proposals);
