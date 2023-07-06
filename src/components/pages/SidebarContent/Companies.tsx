@@ -597,7 +597,9 @@ export default function Companies({ language }: any) {
                         let shouldSaveColumns = userIndex===0 // flag to save the columns only on first iteration
                         let rowObject: any = {"id": userIndex} // auxiliary object build based on the current student's props
                         for(const propName in company){ // for every company property
-                            if (shouldSaveColumns) columns.push({"field": propName, "flex": 1}) // store columns if userIndex is 0
+                            if (shouldSaveColumns) columns.push( // store columns if userIndex is 0
+                                {"field": propName, "flex": 1}
+                            )
                             rowObject = {...rowObject, [propName]: company[propName]} // add the prop-value pair
                         }
                         if (shouldSaveColumns) setCompaniesUserTableColumns(columns) // save columns
@@ -727,6 +729,7 @@ export default function Companies({ language }: any) {
             <Datatable
                 columns = {companiesUserTableColumns}
                 rows = {companiesUserTableRows}
+                hiddenColumns = {["_id"]}
             />
         </Grid>
     )

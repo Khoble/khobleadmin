@@ -3,7 +3,7 @@ import KhobleChartTooltip from '../atoms/KhobleChartTooltip';
 import { useEffect, useRef, useState } from 'react';
 import KhobleChartAxisTick from '../atoms/KhobleChartXAxisTick';
 
-export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, data, configColor, simplified, gradientOverlay }: any) {
+export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, data, configColor, simplified, overlayStyling }: any) {
     // Constants and variables:
 
     // Dynamic components:
@@ -242,7 +242,11 @@ export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, dat
         <div style={{
             width: "100%",
             height: "100%",
-            ...(gradientOverlay && {background: "linear-gradient(to bottom, " + color + "25" + " -5%, #00000000 80%)"}), // apply gradient on top of chart if requested in props
+            ...(overlayStyling && {// apply gradient on top of chart if requested in props
+                background: `linear-gradient(to bottom, ${color+"25"} -5%, #00000000 80%)`,
+                borderTop: `2px solid ${color}`,
+                padding: "16px"
+            })
         }}>
             <ResponsiveContainer>
                 <L1ComponentLabel {...L1ComponentProps}>
