@@ -3,6 +3,8 @@ import KPICard from "../../organisms/KPICard";
 import { Grid } from '@mui/material';
 import khobleAPI from "../../../api/khobleAPI";
 import Datatable from "../../molecules/Datatable";
+import getLatestValue from "../../../utils/functions/getLatestValue";
+import getSumOfValues from "../../../utils/functions/getSumOfValues";
 
 const colors = {
     red: "#d88484",
@@ -14,29 +16,6 @@ const colors = {
     magenta: "#d884ce",
 
 }
-
-// Functions:
-// Get latest value of a data set given a key
-function getLatestValue(data: any, key: any) {
-    if (data.length > 0) {
-        let object = data[data.length - 1];
-        return object[key]
-    }
-    return null; // (if data is null)
-}
-// Get sum of values of a data set given a key
-function getSumOfValues(data: any, key: any) {
-    let sum = 0;
-
-    for (let i = 0; i < data.length; i++) {
-        let obj = data[i];
-        sum += obj[key];
-    }
-
-    return sum;
-}
-
-
 
 export default function Students({ language }: any) {
     // Dummy data:

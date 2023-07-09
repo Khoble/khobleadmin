@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import KPICard from "../../organisms/KPICard";
 import { Grid } from '@mui/material';
 import khobleAPI from "../../../api/khobleAPI";
+import getLatestValue from "../../../utils/functions/getLatestValue";
 
 const colors = {
     red: "#d88484",
@@ -98,16 +99,6 @@ const dummyHiredData = [
     { timestamp: "2023-01-13 12:00:00", hired: 2791 },
     { timestamp: "2023-01-14 00:00:00", hired: 2823 }
 ]
-
-// Functions:
-// Get latest value of a data set given a key
-function getLatestValue(data: any, key: any) {
-    if (data.length > 0) {
-        let object = data[data.length - 1];
-        return object[key]
-    }
-    return null; // (if data is null)
-}
 
 export default function General({ language }: any) {
     // Constants and variables:

@@ -16,7 +16,7 @@ export default function Datatable({ rows, columns, hiddenColumns }: any) {
       <DataGrid
         initialState={{ // this property is used to set the initial configuration of the component, which we use to set the columns that will be initially hidden
           columns: {
-            columnVisibilityModel: Object.fromEntries(hiddenColumns.map((columnName: any) => [columnName, false] /* unpack every hidden-column name */))
+            columnVisibilityModel: (hiddenColumns && Object.fromEntries(hiddenColumns.map((columnName: any) => [columnName, false] /* unpack every hidden-column name */)))
           },
         }}
         sx={{

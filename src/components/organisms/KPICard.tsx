@@ -11,7 +11,7 @@ import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import { useState } from 'react';
 
-export default function KPICard({ language, size, chartType, data, title, color, xDataKey, yDataKeys, metric, metricDescription, trendChangePercent, fixed }: any) {
+export default function KPICard({ language, size, chartType, data, title, color, xDataKey, yDataKeys, metric, metricDescription, trendChangePercent, fixed, componentColors }: any) {
     // Functions:
     // Returns expand icon depending on card size:
     function getExpandIcon() {
@@ -109,15 +109,16 @@ export default function KPICard({ language, size, chartType, data, title, color,
                     <KhobleChart
                         simplified={cardSize === 'm'}
                         chartType={chartType}
-                        color={color}
+                        mainColor={color}
                         xDataKey={xDataKey}
                         yDataKeys={yDataKeys}
                         data={data}
                         configColor={infoColor}
+                        componentColors={componentColors}
                     />
                 }
                 {/* Metric row */}
-                {metric !== undefined && /* Only renders if a metric was provided */
+                {metric !== undefined && /* only renders if a metric was provided ('undefined' is used in validation because metric can take a value of 0) */
                     <Grid /* Item container */
                         container
                         alignItems={"center"}

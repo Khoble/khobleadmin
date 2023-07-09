@@ -1,9 +1,8 @@
 import { LineChart, Line, Bar, BarChart, CartesianGrid, PieChart, Pie, Cell, Tooltip, YAxis, XAxis, Brush, ResponsiveContainer } from 'recharts';
-import KhobleChartTooltip from '../atoms/KhobleChartTooltip';
 import { useEffect, useRef, useState } from 'react';
 import KhobleChartAxisTick from '../atoms/KhobleChartXAxisTick';
 
-export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, data, configColor, simplified, overlayStyling }: any) {
+export default function KhobleChart({ chartType, mainColor, xDataKey, yDataKeys, data, configColor, simplified, overlayStyling, componentColors }: any) {
     // Constants and variables:
 
     // Dynamic components:
@@ -17,8 +16,12 @@ export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, dat
     var L3Components: JSX.Element[] = []; // 2nd-order child component
 
     // Component props:
-    var L1ComponentProps = chartType === "percent" ? {} : { data: data }; // Every L1 component has to have a data property (except percent charts)
-    var L2ComponentProps = {};
+    var L1ComponentProps: any = chartType === "percent" ? {} :
+        {
+            data: data, // every L1 component has to have a data property (except percent charts)
+            overflow: 'visible'  // shows the Y-Axis labels even if they dont fit
+        };
+    var L2ComponentProps: any = {};
 
     // Values used to manage changes in the chart brush:
     const defaultNumberOfXAxisTicks = 12;
@@ -61,21 +64,10 @@ export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, dat
     // Configuration by detail:
     if (!simplified) {
         // Props:
-        L2ComponentProps = {
-            ...L2ComponentProps, ...{
-                ref: componentWidthRef // Add reference to be able to extract it's current width
-            }
-        }
+        L2ComponentProps.ref = componentWidthRef // Add reference to be able to extract it's current width
 
         // Chart configuration:
         configurationComponents.push(
-            // Add tooltip:
-            // <Tooltip 
-            //     content={<KhobleChartTooltip />} 
-            //     key={"tooltip"}
-            //     cursor={{ fill: configColor }} 
-            // />,
-
             <CartesianGrid
                 key={"cartesianGrid"}
                 strokeDasharray='3 3'
@@ -86,6 +78,8 @@ export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, dat
             <YAxis
                 key={"y-axis"}
                 stroke={configColor}
+                interval={0} // give Y-Axis consistent spacing
+                width={40} // mediocre workaround to improve the excessive left margin in the Y-Axis of Bar Charts
             />,
 
             // Add x-axis:
@@ -110,7 +104,7 @@ export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, dat
                     key={"brush"}
                     dataKey={xDataKey}
                     height={30}
-                    stroke={color}
+                    stroke={mainColor}
                     fill='transparent' // No background
                     tickFormatter={() => ("")} // No text labels on the horizontal ends
                     startIndex={brushStartIndex}
@@ -135,12 +129,9 @@ export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, dat
         case "bar":
         case "line":
             // Shared props:
-            L2ComponentProps = {
-                ...L2ComponentProps, ...{
-                    stroke: color,
-                    strokeWidth: 1
-                }
-            }
+            L2ComponentProps.stroke = mainColor // apply main color to every L2 component by default
+            L2ComponentProps.strokeWidth = 1
+
             break;
     }
 
@@ -152,11 +143,12 @@ export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, dat
             L2ComponentLabel = Bar;
 
             // Unique props:
-            L2ComponentProps = {
-                ...L2ComponentProps, ...{
-                    fill: "#ffffff00" // tranparent bar background
-                }
+            L2ComponentProps.fill = "#ffffff00" // transparent bar background
+            if (yDataKeys.length > 1) { // If there are more than 1 y variables, the bars will be stacked and rationalized by default:
+                L2ComponentProps.stackId = 'a' // stack bars
+                L1ComponentProps.stackOffset = "expand" // rationalizes bars
             }
+
             break;
         case "line":
             // Dynamic components:
@@ -164,12 +156,9 @@ export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, dat
             L2ComponentLabel = Line
 
             // Unique props:
-            L2ComponentProps = {
-                ...L2ComponentProps, ...{
-                    dot: false,
-                    type: "monotone"
-                }
-            }
+            L2ComponentProps.dot = false
+            L2ComponentProps.type = "monotone"
+
             break;
         case "percent":
             // Dynamic components:
@@ -187,18 +176,14 @@ export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, dat
             dataCopy[1][dataKey] = vMax - vMin; // will ensure the second slice of the pie chart is the complement to vMax
 
             // Unique props:
-            L2ComponentProps = {
-                ...L2ComponentProps, ...{
-                    data: dataCopy,
-                    cx: "50%",
-                    cy: "100%",
-                    startAngle: 180,
-                    endAngle: 0,
-                    innerRadius: "98%",
-                    outerRadius: "100%",
-                    paddingAngle: 0,
-                }
-            }
+            L2ComponentProps.data = dataCopy;
+            L2ComponentProps.cx = "50%";
+            L2ComponentProps.cy = "100%";
+            L2ComponentProps.startAngle = 180;
+            L2ComponentProps.endAngle = 0;
+            L2ComponentProps.innerRadius = "98%";
+            L2ComponentProps.outerRadius = "100%";
+            L2ComponentProps.paddingAngle = 0;
 
             // Child component creation:
             data.forEach(function (dataEntry: any, index: number) {
@@ -208,7 +193,7 @@ export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, dat
                         key: `cell-${index}`, // Add a key for rendering performance
                         stroke: "none",
                         style: { outline: "none" }, // suppress selection border on click
-                        fill: !index ? color : configColor // Apply color to 1st cell and grey to 2nd 
+                        fill: !index ? mainColor : configColor // Apply color to 1st cell and config color to 2nd 
                     }}
                     />
                 );
@@ -229,7 +214,15 @@ export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, dat
             <L2ComponentLabel {...{
                 ...L2ComponentProps, ...{
                     key: `${L2ComponentLabel}-${index}`, // Add a key for rendering performance
-                    dataKey: dataKey // Assign current data key
+                    dataKey: dataKey, // Assign current data key
+
+                    // Configuration by iteration:
+                    // Individual l2 component color assignment:
+                    ...((componentColors && componentColors[index] && // if a corresponding color value was requested
+                        (chartType === "bar" || chartType === "line")) // and the chart types are 'bar' or 'line'
+                        && {
+                        stroke: componentColors[index] // assign corresponding color
+                    })
                 }
             }}
             >
@@ -242,9 +235,10 @@ export default function KhobleChart({ chartType, color, xDataKey, yDataKeys, dat
         <div style={{
             width: "100%",
             height: "100%",
+            // border: "1px dashed white",
             ...(overlayStyling && {// apply gradient on top of chart if requested in props
-                background: `linear-gradient(to bottom, ${color+"25"} -5%, #00000000 80%)`,
-                borderTop: `2px solid ${color}`,
+                background: `linear-gradient(to bottom, ${mainColor + "25"} -5%, #00000000 80%)`,
+                borderTop: `2px solid ${mainColor}`,
                 padding: "16px"
             })
         }}>
