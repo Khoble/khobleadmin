@@ -3,16 +3,27 @@ import { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import VisibilityOnIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import convertToRGBA from '../../utils/functions/convertToRGBA';
 
-export default function KhobleTextField({ helperText, error, label, type, endAdornment, width, handleTextChange, name, generalColorRBG }: any) {
+export default function KhobleTextField({
+    type="text",
+    generalColor="rgb(192, 192, 192)",
+    helperText,
+    error,
+    label,
+    endAdornment,
+    width,
+    handleTextChange,
+    name
+}: any) {
     // Styling:
     // Variables and constants:
     const themeIsDark = useTheme().palette.mode === "dark";
-    const defaultLabelAlpha = 0.5;
+    const initialLabelAlpha = 0.5;
     const errorColor = "#d88484";
     const focusColor = themeIsDark ? "white" : "black"; // black or white depending on theme
     // Hooks:
-    const [labelAlpha, setLabelAlpha] = useState(defaultLabelAlpha);
+    const [labelAlpha, setLabelAlpha] = useState(initialLabelAlpha);
     const [showPassword, setShowPassword] = useState(false) // used to toggle the password text field type
 
     // Functions:
@@ -29,13 +40,13 @@ export default function KhobleTextField({ helperText, error, label, type, endAdo
             fullWidth={true} // fill width of partent container by default
             label={label}
             type={ // If type was specified as password, it will be toggled between text and password with the visibility icon. Any other type will just be applied:
-                type==="password"? 
-                    showPassword? "text" : "password"
-                : type
+                type === "password" ?
+                    showPassword ? "text" : "password"
+                    : type
             }
             name={name}
             onBlur={(event: any) => { // when text field is abandoned
-                setLabelAlpha(event.target.value.length ? 1 : defaultLabelAlpha) // if text field has text, remove all opacity from the label. Otherwise, set the default
+                setLabelAlpha(event.target.value.length ? 1 : initialLabelAlpha) // if text field has text, remove all opacity from the label. Otherwise, set the default
             }}
             sx={{
                 width: width, // width specified in props
@@ -43,7 +54,7 @@ export default function KhobleTextField({ helperText, error, label, type, endAdo
                 // Border color:
                 "& .MuiOutlinedInput-root": {
                     "& fieldset": {
-                        borderColor: `rgb(${generalColorRBG})`
+                        borderColor: convertToRGBA(generalColor)
                     }
                 },
                 // Border color on error:
@@ -54,7 +65,7 @@ export default function KhobleTextField({ helperText, error, label, type, endAdo
                 },
                 // Initial label color (before floating upwards) on regular case and on error:
                 "& .MuiFormLabel-root, .MuiFormLabel-root.Mui-error": {
-                    color: `rgba(${generalColorRBG},${labelAlpha})`
+                    color: convertToRGBA(generalColor, labelAlpha)
                 },
                 // Label text color on focus (also works on hover):
                 "& .MuiFormLabel-root.Mui-focused": {
@@ -71,13 +82,13 @@ export default function KhobleTextField({ helperText, error, label, type, endAdo
                 // Pulsating animation on hover:
                 "@keyframes pulsatingBorder": {
                     "0%": {
-                        borderColor: `rgba(${generalColorRBG},0.2)`
+                        borderColor: convertToRGBA(generalColor, 0.2)
                     },
                     "50%": {
                         borderColor: focusColor
                     },
                     "100%": {
-                        borderColor: `rgba(${generalColorRBG},0.2)`
+                        borderColor: convertToRGBA(generalColor, 0.2)
                     }
                 },
                 // On focus

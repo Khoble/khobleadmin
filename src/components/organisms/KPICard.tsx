@@ -10,6 +10,7 @@ import { CardActions, Grid, IconButton } from '@mui/material';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import { useState } from 'react';
+import convertToRGBA from '../../utils/functions/convertToRGBA';
 
 export default function KPICard({ language, size, chartType, data, title, color, xDataKey, yDataKeys, metric, metricDescription, trendChangePercent, fixed, componentColors }: any) {
     // Functions:
@@ -100,7 +101,7 @@ export default function KPICard({ language, size, chartType, data, title, color,
             sx={{borderTop: `2px solid ${color}`}}
         >
             <CardContent sx={{
-                background: `linear-gradient(to bottom, ${color+"25"} -5%, #00000000 80%)`,
+                background: `linear-gradient(to bottom, ${convertToRGBA(color, 0.25)} -5%, #00000000 80%)`,
                 width: "400px",
                 ...(cardSize !=='s' && {height: "230px"}), // displays nothing for small charts
             }}

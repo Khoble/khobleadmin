@@ -9,13 +9,14 @@ import { useTheme } from '@mui/material/styles';
 import KhobleLogoGradient from "../../../public/khoble_logo_darkmode_gradient.svg"
 import KhobleLogo from "../../../public/khoble_magenta_blue_separate_paths.svg"
 import khobleAPI from "../../api/khobleAPI";
+import convertToRGBA from "../../utils/functions/convertToRGBA";
 
 export default function Login({ language }: any) {
     // Variables & constants:
     const navigate = useNavigate();
     const theme = useTheme();
     const themeIsDark = theme.palette.mode === "dark"
-    const generalGreyAsRGB = "192, 192, 192"; // desired grey color
+    const generalGrey = "rgb(192, 192, 192)"; // desired grey color
     const loginErrorMessage = (
         language === "english" ?
             "Invalid credentials" :
@@ -129,7 +130,6 @@ export default function Login({ language }: any) {
                             width="300px"
                             name="email"
                             handleTextChange={handleTextChange}
-                            generalColorRBG={generalGreyAsRGB}
                             label={
                                 language === "english" ?
                                     "Email" :
@@ -146,7 +146,6 @@ export default function Login({ language }: any) {
                             helperText={loginErrorMessage}
                             width="300px"
                             name="password"
-                            generalColorRBG={generalGreyAsRGB}
                             handleTextChange={handleTextChange}
                             label={
                                 language === "english" ?
@@ -164,7 +163,7 @@ export default function Login({ language }: any) {
                             }}
                             onClick={attemptLogin}
                         >
-                            <EnterIcon style={{ color: `rgba(${generalGreyAsRGB}, ${enterButtonAlphaValue})` }} />
+                            <EnterIcon style={{ color: convertToRGBA(generalGrey, enterButtonAlphaValue) || ""}} />
                         </IconButton>
                     </div>
                 </CardContent>

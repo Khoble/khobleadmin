@@ -1,8 +1,21 @@
 import { LineChart, Line, Bar, BarChart, CartesianGrid, PieChart, Pie, Cell, Tooltip, YAxis, XAxis, Brush, ResponsiveContainer } from 'recharts';
 import { useEffect, useRef, useState } from 'react';
-import KhobleChartAxisTick from '../atoms/KhobleChartXAxisTick';
+import KhobleChartAxisTick from '../atoms/KhobleChartAxisTick';
+import convertToRGBA from '../../utils/functions/convertToRGBA';
 
-export default function KhobleChart({ chartType, mainColor, xDataKey, yDataKeys, data, configColor, simplified, overlayStyling, componentColors }: any) {
+export default function KhobleChart({
+    chartType = "line",
+    mainColor = "FFFFFF",
+    configColor = "#808080",
+    numberOfXAxisTicks = 12,
+    simplified = false,
+    overlayStyling = false,
+    fill = false,
+    xDataKey,
+    yDataKeys,
+    data,
+    componentColors
+}: any) {
     // Constants and variables:
 
     // Dynamic components:
@@ -24,12 +37,11 @@ export default function KhobleChart({ chartType, mainColor, xDataKey, yDataKeys,
     var L2ComponentProps: any = {};
 
     // Values used to manage changes in the chart brush:
-    const defaultNumberOfXAxisTicks = 12;
     const [brushStartIndex, setBrushStartIndex] = useState(0); // where the leftmost end of the brush will start (0 by default)
     const [brushEndIndex, setBrushEndIndex] = useState( //  where the leftmost end of the brush will end
-        data.length < defaultNumberOfXAxisTicks ? // if there are less data points than default number of x-axis ticks to show
+        data.length < numberOfXAxisTicks ? // if there are less data points than default number of x-axis ticks to show
             data.length - 1 : // the last index of the data array
-            defaultNumberOfXAxisTicks - 1
+            numberOfXAxisTicks - 1
     ); // Brush end-index falls on the last data element of the default range (numerOfDefaultXAxisTcks)
 
     // Sizing variables:
@@ -71,7 +83,7 @@ export default function KhobleChart({ chartType, mainColor, xDataKey, yDataKeys,
             <CartesianGrid
                 key={"cartesianGrid"}
                 strokeDasharray='3 3'
-                stroke={configColor + 25} // 25% opacity on top
+                stroke={convertToRGBA(configColor, 0.2) || ""} // 25% opacity on top
             />,
 
             // Add y-axis:
@@ -143,7 +155,7 @@ export default function KhobleChart({ chartType, mainColor, xDataKey, yDataKeys,
             L2ComponentLabel = Bar;
 
             // Unique props:
-            L2ComponentProps.fill = "#ffffff00" // transparent bar background
+            L2ComponentProps.fill = fill? mainColor : "#ffffff00" // transparent bar background
             if (yDataKeys.length > 1) { // If there are more than 1 y variables, the bars will be stacked and rationalized by default:
                 L2ComponentProps.stackId = 'a' // stack bars
                 L1ComponentProps.stackOffset = "expand" // rationalizes bars
