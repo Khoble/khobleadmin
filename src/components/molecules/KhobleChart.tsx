@@ -1,4 +1,4 @@
-import { LineChart, Line, Bar, BarChart, CartesianGrid, PieChart, Pie, Cell, Tooltip, YAxis, XAxis, Brush, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, Bar, BarChart, CartesianGrid, PieChart, Pie, Cell, Tooltip, YAxis, XAxis, Brush, ResponsiveContainer, Legend } from 'recharts';
 import { useEffect, useRef, useState } from 'react';
 import KhobleChartAxisTick from '../atoms/KhobleChartAxisTick';
 import convertToRGBA from '../../utils/functions/convertToRGBA';
@@ -79,6 +79,7 @@ export default function KhobleChart({
         L2ComponentProps.ref = componentWidthRef // Add reference to be able to extract it's current width
 
         // Chart configuration:
+        // Fixed configuration:
         configurationComponents.push(
             <CartesianGrid
                 key={"cartesianGrid"}
@@ -108,6 +109,7 @@ export default function KhobleChart({
             />
         );
 
+        // Conditional configuration:
         // Add brush if data has more than 1 data point:
         if (data.length > 1) {
             // console.log("["+brushStartIndex+","+brushEndIndex+"]");
@@ -131,6 +133,22 @@ export default function KhobleChart({
                     }}
                 />
             );
+        }
+        
+        // Add a legend only if there are 2 or more L2 component colors:
+        if (componentColors.length >= 2) {
+            configurationComponents.push(
+            <Legend 
+                key="legend" 
+                payload={yDataKeys.map((dataKey: string, index: any) => ({
+                    id: dataKey,
+                    type: "plainline", // solid line icon
+                    value: `${dataKey}`,
+                    color: componentColors[index] || mainColor,
+                    payload: {} // recharts bug workaround to use "plainline" for "type" attribute
+                }))}
+            />
+            )
         }
     }
 
