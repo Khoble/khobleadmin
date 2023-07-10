@@ -11,6 +11,7 @@ export default function KhobleChart({
     simplified = false,
     overlayStyling = false,
     fill = false,
+    tooltip,
     xDataKey,
     yDataKeys,
     data,
@@ -111,35 +112,31 @@ export default function KhobleChart({
 
         // Conditional configuration:
         // Add brush if data has more than 1 data point:
-        if (data.length > 1) {
-            // console.log("["+brushStartIndex+","+brushEndIndex+"]");
-            configurationComponents.push(
-                <Brush
-                    key={"brush"}
-                    dataKey={xDataKey}
-                    height={30}
-                    stroke={mainColor}
-                    fill='transparent' // No background
-                    tickFormatter={() => ("")} // No text labels on the horizontal ends
-                    startIndex={brushStartIndex}
-                    endIndex={brushEndIndex}
-                    onChange={(brush) => {
-                        // Update brush start and end indices:
-                        if (brush.startIndex != undefined && brush.endIndex != undefined) {
-                            setBrushStartIndex(brush.startIndex);
-                            setBrushEndIndex(brush.endIndex);
-                            // The previous 2 lines will trigger x-axis tick text adjustment, since such props are used in the 'updateXAxisTickWidth' function
-                        }
-                    }}
-                />
-            );
-        }
-        
+        data.length > 1 && configurationComponents.push(
+            <Brush
+                key={"brush"}
+                dataKey={xDataKey}
+                height={30}
+                stroke={mainColor}
+                fill='transparent' // No background
+                tickFormatter={() => ("")} // No text labels on the horizontal ends
+                startIndex={brushStartIndex}
+                endIndex={brushEndIndex}
+                onChange={(brush) => {
+                    // Update brush start and end indices:
+                    if (brush.startIndex !== undefined && brush.endIndex !== undefined) {
+                        setBrushStartIndex(brush.startIndex);
+                        setBrushEndIndex(brush.endIndex);
+                        // The previous 2 lines will trigger x-axis tick text adjustment, since such props are used in the 'updateXAxisTickWidth' function
+                    }
+                }}
+            />
+        );
+
         // Add a legend only if there are 2 or more L2 component colors:
-        if (componentColors.length >= 2) {
-            configurationComponents.push(
-            <Legend 
-                key="legend" 
+        componentColors && componentColors.length >= 2 && configurationComponents.push(
+            <Legend
+                key="legend"
                 payload={yDataKeys.map((dataKey: string, index: any) => ({
                     id: dataKey,
                     type: "plainline", // solid line icon
@@ -148,8 +145,10 @@ export default function KhobleChart({
                     payload: {} // recharts bug workaround to use "plainline" for "type" attribute
                 }))}
             />
-            )
-        }
+        )
+
+        // Add a tooltip if provided:
+        tooltip && configurationComponents.push(<Tooltip content={tooltip} cursor={{ fill: configColor }} wrapperStyle={{ pointerEvents: "all" }} />)
     }
 
     // Configuration by chart type:
@@ -173,7 +172,7 @@ export default function KhobleChart({
             L2ComponentLabel = Bar;
 
             // Unique props:
-            L2ComponentProps.fill = fill? mainColor : "#ffffff00" // transparent bar background
+            L2ComponentProps.fill = fill ? mainColor : "#ffffff00" // transparent bar background
             if (yDataKeys.length > 1) { // If there are more than 1 y variables, the bars will be stacked and rationalized by default:
                 L2ComponentProps.stackId = 'a' // stack bars
                 L1ComponentProps.stackOffset = "expand" // rationalizes bars
