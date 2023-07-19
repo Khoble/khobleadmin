@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import KPICard from "../../organisms/KPICard";
-import { Avatar, AvatarGroup, Box, Button, Grid } from '@mui/material';
+import { Avatar, AvatarGroup, Box, Button, Grid, Modal } from '@mui/material';
 import khobleAPI from "../../../api/khobleAPI";
 import Datatable from "../../molecules/Datatable";
 import getLatestValue from "../../../utils/functions/getLatestValue";
@@ -38,7 +38,6 @@ function stringToColor(string: string) {
 
     return color;
 }
-
 function stringAvatar(name: string) {
     return {
         sx: {
@@ -47,6 +46,47 @@ function stringAvatar(name: string) {
         children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
     };
 }
+
+// Component used to display a group of avatars (in this case, recruiters):
+const AvatarGroupComponent = ({ recruiters, onAvatarGroupClick }: any) => {
+    // Constants and variables:
+    const primaryColor = useTheme().palette.mode === "dark" ? "white" : "black"; // used to determine the avatar border colors
+
+    return (
+        <Box
+            onClick={() => onAvatarGroupClick(recruiters)} // Remove the immediate function invocation
+            sx={{
+                borderRadius: "100em",
+                padding: "2px",
+                "&:hover": {
+                    cursor: "pointer",
+                    outline: `1px solid ${primaryColor}`,
+                },
+            }}
+        >
+            <AvatarGroup
+                max={2}
+                sx={{
+                    "& .MuiAvatarGroup-avatar": {
+                        borderColor: primaryColor,
+                        borderWidth: "1px"
+                    }
+                }}
+            >
+                {recruiters.map((recruiterObject: any, recruiterIndex: number) => (
+                    <Avatar
+                        key={`avatar-${recruiterIndex}`}
+                        {...(recruiterObject.profile_img_url ? /* If recruiter has a profile picture: */
+                            { src: recruiterObject.profile_img_url } // create avatar from profile picture
+                            :
+                            stringAvatar(recruiterObject.name) // create avatar from initials
+                        )}
+                    />
+                ))}
+            </AvatarGroup>
+        </Box>
+    );
+};
 
 export default function Companies({ language }: any) {
     // Dummy data:
@@ -525,7 +565,32 @@ export default function Companies({ language }: any) {
     ]
 
     // Constants and variables:
-    const primaryColor = useTheme().palette.mode === "dark"? "white": "black";
+    const primaryColor = useTheme().palette.mode === "dark" ? "white" : "black"; // used to determine the avatar border colors
+    // Recruiter modal:
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const handleModalToggle = (recruiters: any[]) => {
+        setSelectedRecruitersTemp(!isModalOpen ? recruiters : []) // set the recruiters on open, remove recruiters on close
+        setIsModalOpen(!isModalOpen);
+    };
+    const modalStyle = {
+        position: 'absolute' as 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        minWidth: "50%",
+        bgcolor: 'background.paper',
+        // border: `2px solid ${primaryColor}`,
+        boxShadow: `0px 0px 53px -7px rgba(${primaryColor === "white"? "255,255,255" : "0,0,0"},0.63)`,
+        webkitBoxShadow: `0px 0px 53px -7px rgba(${primaryColor === "white"? "255,255,255" : "0,0,0"},0.63)`,
+        mozBoxShadow: `0px 0px 53px 7px -rgba(${primaryColor === "white"? "255,255,255" : "0,0,0"},0.63)`,
+        p: 4,
+        borderRadius: "10px"
+    };
+    const [selectedRecruiters, setSelectedRecruiters] = useState<any[]>([]);
+    const [selectedRecruitersTemp, setSelectedRecruitersTemp] = useState<any[]>([]); // temporary state to prevent re-render inside avatar component
+    useEffect(() => {
+        setSelectedRecruiters(selectedRecruitersTemp);
+    }, [selectedRecruitersTemp]);
 
     // KPI data:
     const [companiesOverTimeData, setCompaniesOverTimeData] = useState<any>(null);
@@ -594,54 +659,23 @@ export default function Companies({ language }: any) {
                 var rows: any = []; // auxiliary array to save the student table rows
                 rawData.companies.map((company: any, userIndex: any) => { // for every student
                     let shouldSaveColumns = userIndex === 0 // flag to save the columns only on first iteration
-                    let rowObject: any = { "id": userIndex } // auxiliary object based on the current student's props
-                    for (const propName in company) { // for every company property
+                    let rowObject: any = { "id": userIndex } // auxiliary object based on the current student's props (requires an Id by default)
+                    for (const propName in company) { // for every property in the company object
                         if (shouldSaveColumns) { // Store columns if userIndex is 0:
                             let columnObject: any = { "field": propName, "flex": 1 }
 
                             // Render component for cells in the "Recruiters" column:
-                            propName === "recruiters" && (
-                                columnObject["renderCell"] = (payload: any) => {
-                                    if (payload && payload.value && payload.value.length) { // If there is main recruiter data:
-                                        let recruiterObjectArray = payload.value // extract the object of the first recruiter
-                                        return (
-                                            // Create a component with the main recruiter's picture and name
-                                            <Box
-                                                sx={{
-                                                    borderRadius: "100em",
-                                                    padding: "2px",
-                                                    "&:hover": {
-                                                        cursor: "pointer",
-                                                        outline: `1px solid ${primaryColor}`,
-                                                    },
-                                                }}
-                                            >
-                                                <AvatarGroup 
-                                                    max={2}
-                                                    sx={{
-                                                        "& .MuiAvatarGroup-avatar": {
-                                                            borderColor: primaryColor,
-                                                            borderWidth: "1px"
-                                                        }
-                                                    }}
-                                                >
-                                                    {
-                                                        recruiterObjectArray.map((recruiterObject: any, recruiterIndex: number) => (
-                                                            <Avatar
-                                                                key={`avatar-${recruiterIndex}`}
-                                                                {...(recruiterObject.profile_img_url ? /* If recruiter has a profile picture: */
-                                                                    { src: recruiterObject.profile_img_url } // create avatar from profile picture
-                                                                    :
-                                                                    stringAvatar(recruiterObject.name) // create avatar from initials
-                                                                )}
-                                                            />
-                                                        ))
-                                                    }
-                                                </AvatarGroup>
-                                            </Box>
-                                        )
-                                    }
+                            propName === "recruiters" && (columnObject.renderCell = (payload: any) => { // 'renderCell' prop is used to display components as cell content
+                                if (payload && payload.value && payload.value.length) { // If there is main recruiter data:
+                                    let recruiterObjectArray = payload.value // extract the array containing the recruiters
+                                    return (
+                                        <AvatarGroupComponent
+                                            recruiters={recruiterObjectArray}
+                                            onAvatarGroupClick={handleModalToggle}
+                                        />
+                                    )
                                 }
+                            }
                             )
                             columns.push(columnObject)
                         }
@@ -774,6 +808,102 @@ export default function Companies({ language }: any) {
                 rows={companiesUserTableRows}
                 hiddenColumns={["_id"]}
             />
+            <Modal
+                open={isModalOpen}
+                onClose={handleModalToggle}
+
+            >
+                <Box sx={modalStyle}>
+                    <Grid
+                        container
+                        direction="column"
+                        justifyContent="center"
+                        alignItems="center"
+                    // sx={{ border: "1px solid limegreen" }}
+                    >
+                        {selectedRecruiters.map((recruiterObject: any, recruiterIndex: number) => (
+                            <Grid
+                                item
+                                key={`recruiter-grid-item-${recruiterIndex}`}
+                                sx={{
+                                    width: "100%",
+                                    // border: "1px solid magenta" 
+                                }}
+                            >
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justifyContent="left"
+                                    alignItems="center"
+                                    // sx={{ border: "1px solid orange" }}
+                                    wrap="nowrap"
+                                >
+                                    <Grid
+                                        item
+                                        padding={2}
+                                    // sx={{ border: "1px dashed white" }}
+                                    >
+                                        <Avatar
+                                            key={`avatar-${recruiterIndex}`}
+                                            {...(recruiterObject.profile_img_url ? /* If recruiter has a profile picture: */
+                                                { src: recruiterObject.profile_img_url } // create avatar from profile picture
+                                                :
+                                                stringAvatar(recruiterObject.name) // create avatar from initials
+                                            )}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        sx={{
+                                            flexGrow: 1,
+                                            // border: "1px solid yellow" 
+                                        }}
+                                    >
+                                        <Grid
+                                            container
+                                            direction="row"
+                                            justifyContent="space-between"
+                                            alignItems="center"
+                                        // sx={{ border: "1px solid purple" }}
+                                        >
+                                            <Grid
+                                                item
+                                                sx={{
+                                                    maxWidth: "calc(100%/3)",
+                                                    overflowWrap: 'break-word',
+                                                    // border: "1px dashed white" 
+                                                }}
+                                            >
+                                                {recruiterObject.name}
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                sx={{
+                                                    maxWidth: "calc(100%/3)",
+                                                    overflowWrap: 'break-word',
+                                                    // border: "1px dashed white", 
+                                                }}
+                                            >
+                                                {recruiterObject.phone}
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                sx={{
+                                                    maxWidth: "calc(100%/3)",
+                                                    overflowWrap: 'break-word',
+                                                    // border: "1px dashed white", 
+                                                }}
+                                            >
+                                                {recruiterObject.email}
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Box>
+            </Modal>
         </Grid>
     )
 }
