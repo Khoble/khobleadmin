@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import KPICard from "../../organisms/KPICard";
-import { Grid } from '@mui/material';
+import { Avatar, AvatarGroup, Box, Button, Grid } from '@mui/material';
 import khobleAPI from "../../../api/khobleAPI";
 import Datatable from "../../molecules/Datatable";
 import getLatestValue from "../../../utils/functions/getLatestValue";
-import getSumOfValues from "../../../utils/functions/getSumOfValues";
+import handleExpiredSession from "../../../utils/handleExpiredSession";
+import { useTheme } from '@mui/material/styles';
 
 const colors = {
     red: "#d88484",
@@ -15,6 +16,36 @@ const colors = {
     lile: "#8c84d8",
     magenta: "#d884ce",
 
+}
+
+// Functions for obtaining the rectruiters' initials:
+function stringToColor(string: string) {
+    let hash = 0;
+    let i;
+
+    /* eslint-disable no-bitwise */
+    for (i = 0; i < string.length; i += 1) {
+        hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    let color = '#';
+
+    for (i = 0; i < 3; i += 1) {
+        const value = (hash >> (i * 8)) & 0xff;
+        color += `00${value.toString(16)}`.slice(-2);
+    }
+    /* eslint-enable no-bitwise */
+
+    return color;
+}
+
+function stringAvatar(name: string) {
+    return {
+        sx: {
+            bgcolor: stringToColor(name),
+        },
+        children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+    };
 }
 
 export default function Companies({ language }: any) {
@@ -494,6 +525,8 @@ export default function Companies({ language }: any) {
     ]
 
     // Constants and variables:
+    const primaryColor = useTheme().palette.mode === "dark"? "white": "black";
+
     // KPI data:
     const [companiesOverTimeData, setCompaniesOverTimeData] = useState<any>(null);
     const [companiesByIndustryData, setCompaniesByIndustryData] = useState<any>(null);
@@ -508,16 +541,12 @@ export default function Companies({ language }: any) {
     // API calls:
     useEffect(() => {
         const fetchCompaniesOverTime = async () => {
-            try {
-                const response = await khobleAPI.get("/dashboard/company/registered-in-time"); // make API call
-                const rawData = await response.data; // extract data
-                if (rawData) { // if property was found
-                    setCompaniesOverTimeData(rawData.companiesRegisteredInTime);
-                } else {
-                    throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
-                }
-            } catch (error) {
-                console.error(error); // raise error explaining inability to connect to the endpoint 
+            const response = await khobleAPI.get("/dashboard/company/registered-in-time"); // make API call
+            const rawData = await response.data; // extract data
+            if (rawData) { // if property was found
+                setCompaniesOverTimeData(rawData.companiesRegisteredInTime);
+            } else {
+                throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
             }
         };
 
@@ -537,59 +566,93 @@ export default function Companies({ language }: any) {
         // };
 
         const fetchPostingsByIndustry = async () => {
-            try {
-                const response = await khobleAPI.get("/dashboard/company/publications-by-industries"); // make API call
-                const rawData = await response.data; // extract data
-                if (rawData) { // if property was found
-                    setPostingsByIndustryData(rawData.publicationsByIndustry);
-                } else {
-                    throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
-                }
-            } catch (error) {
-                console.error(error); // raise error explaining inability to connect to the endpoint 
+            const response = await khobleAPI.get("/dashboard/company/publications-by-industries"); // make API call
+            const rawData = await response.data; // extract data
+            if (rawData) { // if property was found
+                setPostingsByIndustryData(rawData.publicationsByIndustry);
+            } else {
+                throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
             }
         };
 
         const fetchPostingsOverTime = async () => {
-            try {
-                const response = await khobleAPI.get("/dashboard/company/publications-in-time"); // make API call
-                const rawData = await response.data; // extract data
-                if (rawData) { // if property was found
-                    setPostingsOverTimeData(rawData.publicationsInTime);
-                } else {
-                    throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
-                }
-            } catch (error) {
-                console.error(error); // raise error explaining inability to connect to the endpoint 
+            const response = await khobleAPI.get("/dashboard/company/publications-in-time"); // make API call
+            const rawData = await response.data; // extract data
+            if (rawData) { // if property was found
+                setPostingsOverTimeData(rawData.publicationsInTime);
+            } else {
+                throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
             }
         };
 
         const fetchCompaniesUserTable = async () => {
-            try {
-                const response = await khobleAPI.get("/dashboard/company"); // make API call
-                const responseProperty = "data" // specify the property of the response we want to extract
-                const rawData = await response[responseProperty]; // extract property
-                if (rawData) { // if property was found
-                    var columns: any = []; // auxiliary array to save the companies table columns
-                    var rows: any = []; // auxiliary array to save the student table rows
-                    rawData.companies.map((company: any, userIndex: any) => { // for every student
-                        let shouldSaveColumns = userIndex===0 // flag to save the columns only on first iteration
-                        let rowObject: any = {"id": userIndex} // auxiliary object build based on the current student's props
-                        for(const propName in company){ // for every company property
-                            if (shouldSaveColumns) columns.push( // store columns if userIndex is 0
-                                {"field": propName, "flex": 1}
+            const response = await khobleAPI.get("/dashboard/company"); // make API call
+            const responseProperty = "data" // specify the property of the response we want to extract
+            const rawData = await response[responseProperty]; // extract property
+            if (rawData) { // if property was found
+                var columns: any = []; // auxiliary array to save the companies table columns
+                var rows: any = []; // auxiliary array to save the student table rows
+                rawData.companies.map((company: any, userIndex: any) => { // for every student
+                    let shouldSaveColumns = userIndex === 0 // flag to save the columns only on first iteration
+                    let rowObject: any = { "id": userIndex } // auxiliary object based on the current student's props
+                    for (const propName in company) { // for every company property
+                        if (shouldSaveColumns) { // Store columns if userIndex is 0:
+                            let columnObject: any = { "field": propName, "flex": 1 }
+
+                            // Render component for cells in the "Recruiters" column:
+                            propName === "recruiters" && (
+                                columnObject["renderCell"] = (payload: any) => {
+                                    if (payload && payload.value && payload.value.length) { // If there is main recruiter data:
+                                        let recruiterObjectArray = payload.value // extract the object of the first recruiter
+                                        return (
+                                            // Create a component with the main recruiter's picture and name
+                                            <Box
+                                                sx={{
+                                                    borderRadius: "100em",
+                                                    padding: "2px",
+                                                    "&:hover": {
+                                                        cursor: "pointer",
+                                                        outline: `1px solid ${primaryColor}`,
+                                                    },
+                                                }}
+                                            >
+                                                <AvatarGroup 
+                                                    max={2}
+                                                    sx={{
+                                                        "& .MuiAvatarGroup-avatar": {
+                                                            borderColor: primaryColor,
+                                                            borderWidth: "1px"
+                                                        }
+                                                    }}
+                                                >
+                                                    {
+                                                        recruiterObjectArray.map((recruiterObject: any, recruiterIndex: number) => (
+                                                            <Avatar
+                                                                key={`avatar-${recruiterIndex}`}
+                                                                {...(recruiterObject.profile_img_url ? /* If recruiter has a profile picture: */
+                                                                    { src: recruiterObject.profile_img_url } // create avatar from profile picture
+                                                                    :
+                                                                    stringAvatar(recruiterObject.name) // create avatar from initials
+                                                                )}
+                                                            />
+                                                        ))
+                                                    }
+                                                </AvatarGroup>
+                                            </Box>
+                                        )
+                                    }
+                                }
                             )
-                            rowObject = {...rowObject, [propName]: company[propName]} // add the prop-value pair
+                            columns.push(columnObject)
                         }
-                        if (shouldSaveColumns) setCompaniesUserTableColumns(columns) // save columns
-                        rows.push(rowObject) // store row object
-                    })
-                    setCompaniesUserTableRows(rows) // save rows
-                } else {
-                    throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
-                }
-            } catch (error) {
-                console.error(error); // raise error explaining inability to connect to the endpoint 
+                        rowObject[propName] = company[propName] // add the prop-value pair
+                    }
+                    if (shouldSaveColumns) setCompaniesUserTableColumns(columns) // save columns
+                    rows.push(rowObject) // store row object
+                })
+                setCompaniesUserTableRows(rows) // save rows
+            } else {
+                throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
             }
         };
 
@@ -604,8 +667,9 @@ export default function Companies({ language }: any) {
                     fetchPostingsOverTime(),
                     fetchCompaniesUserTable()
                 ]);
-            } catch (error) {
+            } catch (error: any) {
                 console.error(error); // handle error
+                if (error.response.data.msg === "Token no valido") handleExpiredSession()
             } finally {
                 setIsLoading(false);
             }
@@ -706,9 +770,9 @@ export default function Companies({ language }: any) {
                 />
             </Grid>
             <Datatable
-                columns = {companiesUserTableColumns}
-                rows = {companiesUserTableRows}
-                hiddenColumns = {["_id"]}
+                columns={companiesUserTableColumns}
+                rows={companiesUserTableRows}
+                hiddenColumns={["_id"]}
             />
         </Grid>
     )

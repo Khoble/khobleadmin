@@ -1,16 +1,18 @@
 import { LineChart, Line, Bar, BarChart, CartesianGrid, PieChart, Pie, Cell, Tooltip, YAxis, XAxis, Brush, ResponsiveContainer, Legend } from 'recharts';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import KhobleChartAxisTick from '../atoms/KhobleChartAxisTick';
 import convertToRGBA from '../../utils/functions/convertToRGBA';
+import complementizeArray from '../../utils/functions/complementizeArray';
 
 export default function KhobleChart({
     chartType = "line",
-    mainColor = "FFFFFF",
+    mainColor = "#ffffff",
     configColor = "#808080",
     numberOfXAxisTicks = 12,
     simplified = false,
     overlayStyling = false,
-    fill = false,
+    filledBars = false,
+    complementize = false,
     tooltip,
     xDataKey,
     yDataKeys,
@@ -18,7 +20,6 @@ export default function KhobleChart({
     componentColors
 }: any) {
     // Constants and variables:
-
     // Dynamic components:
     // Labels:
     var L1ComponentLabel: any; // Parent chart component label
@@ -29,10 +30,17 @@ export default function KhobleChart({
     var L2Components: JSX.Element[] = [] // Used to store and render L2 components
     var L3Components: JSX.Element[] = []; // 2nd-order child component
 
+    // Data:
+    const complementizedData = useMemo(() => complementizeArray(data, yDataKeys), []) // memoize this function so that it is not re-calculated upon every re-render 
+
     // Component props:
     var L1ComponentProps: any = chartType === "percent" ? {} :
         {
-            data: data, // every L1 component has to have a data property (except percent charts)
+            data: // every L1 component has to have a data property (except percent charts)
+                complementize ? // if complementizing was requested in props
+                    complementizedData // uses complementized data
+                    :
+                    data, // uses original data
             overflow: 'visible'  // shows the Y-Axis labels even if they dont fit
         };
     var L2ComponentProps: any = {};
@@ -94,6 +102,9 @@ export default function KhobleChart({
                 stroke={configColor}
                 interval={0} // give Y-Axis consistent spacing
                 width={40} // mediocre workaround to improve the excessive left margin in the Y-Axis of Bar Charts
+                {...((complementize && yDataKeys.length > 1) && { // formats Y-Axis values as percentages if complementizing was requested in props
+                    tickFormatter: (tickValue => `${tickValue * 100}%`)
+                })}
             />,
 
             // Add x-axis:
@@ -133,11 +144,12 @@ export default function KhobleChart({
             />
         );
 
-        // Add a legend only if there are 2 or more L2 component colors:
-        componentColors && componentColors.length >= 2 && configurationComponents.push(
+        // Add a legend only if there are more than 1 L2 component colors:
+        componentColors && componentColors.length > 1 && configurationComponents.push(
             <Legend
                 key="legend"
                 payload={yDataKeys.map((dataKey: string, index: any) => ({
+                    key: `legend-item-${index}`,
                     id: dataKey,
                     type: "plainline", // solid line icon
                     value: `${dataKey}`,
@@ -148,7 +160,15 @@ export default function KhobleChart({
         )
 
         // Add a tooltip if provided:
-        tooltip && configurationComponents.push(<Tooltip content={tooltip} cursor={{ fill: configColor }} wrapperStyle={{ pointerEvents: "all" }} />)
+        tooltip && configurationComponents.push(
+            <Tooltip
+                key="tooltip"
+                content={tooltip}
+                cursor={{ fill: convertToRGBA(configColor, 0.5) || configColor }}
+                wrapperStyle={{ pointerEvents: "all" }}
+                position={{ y: 120 }} // fixed Y position
+            />
+        )
     }
 
     // Configuration by chart type:
@@ -172,11 +192,11 @@ export default function KhobleChart({
             L2ComponentLabel = Bar;
 
             // Unique props:
-            L2ComponentProps.fill = fill ? mainColor : "#ffffff00" // transparent bar background
             if (yDataKeys.length > 1) { // If there are more than 1 y variables, the bars will be stacked and rationalized by default:
                 L2ComponentProps.stackId = 'a' // stack bars
-                L1ComponentProps.stackOffset = "expand" // rationalizes bars
+                complementize && (L1ComponentProps.stackOffset = "expand") // complementizes bars if requested in props
             }
+            L2ComponentProps.fill = "#ffffff00" // transparent bar fill by default
 
             break;
         case "line":
@@ -247,10 +267,14 @@ export default function KhobleChart({
 
                     // Configuration by iteration:
                     // Individual l2 component color assignment:
-                    ...((componentColors && componentColors[index] && // if a corresponding color value was requested
-                        (chartType === "bar" || chartType === "line")) // and the chart types are 'bar' or 'line'
-                        && {
-                        stroke: componentColors[index] // assign corresponding color
+                    ...((chartType === "bar" || chartType === "line") && {// if the chart types are 'bar' or 'line'
+                        ...((componentColors && componentColors[index]) && {// if a corresponding color value was requested
+                            stroke: componentColors[index], // apply stroke
+                            ...((chartType === "bar" && filledBars) && { // if bars should have a fill
+                                fill: convertToRGBA(componentColors[index], 0.5)
+                                // fill: `linear-gradient(to bottom, ${convertToRGBA(componentColors[index], 0.5)} -5%, #00000000 80%)`,
+                            })
+                        })
                     })
                 }
             }}
@@ -266,7 +290,7 @@ export default function KhobleChart({
             height: "100%",
             // border: "1px dashed white",
             ...(overlayStyling && {// apply gradient on top of chart if requested in props
-                background: `linear-gradient(to bottom, ${mainColor + "25"} -5%, #00000000 80%)`,
+                background: `linear-gradient(to bottom, ${convertToRGBA(mainColor, 0.25)} -5%, #00000000 80%)`,
                 borderTop: `2px solid ${mainColor}`,
                 padding: "16px"
             })

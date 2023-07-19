@@ -5,6 +5,7 @@ import khobleAPI from "../../../api/khobleAPI";
 import Datatable from "../../molecules/Datatable";
 import getLatestValue from "../../../utils/functions/getLatestValue";
 import getSumOfValues from "../../../utils/functions/getSumOfValues";
+import handleExpiredSession from "../../../utils/handleExpiredSession";
 
 const colors = {
     red: "#d88484",
@@ -323,59 +324,47 @@ export default function Students({ language }: any) {
     // API calls:
     useEffect(() => {
         const fetchStudentsOverTime = async () => {
-            try {
-                const response = await khobleAPI.get("/dashboard/student/registered-in-time"); // make API call
-                const rawData = await response.data; // extract data
-                if (rawData) { // if property was found
-                    let myData = rawData.studentsRegisteredInTime;
-                    setStudentsOverTime(myData);
-                } else {
-                    throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
-                }
-            } catch (error) {
-                console.error(error); // raise error explaining inability to connect to the endpoint 
+            const response = await khobleAPI.get("/dashboard/student/registered-in-time"); // make API call
+            const rawData = await response.data; // extract data
+            if (rawData) { // if property was found
+                let myData = rawData.studentsRegisteredInTime;
+                setStudentsOverTime(myData);
+            } else {
+                throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
             }
         };
 
         const fetchStudentsByIndustry = async () => {
-            try {
-                const response = await khobleAPI.get("/dashboard/student/by-industry"); // make API call
-                const responseProperty = "data" // specify the property of the response we want to extract
-                const rawData = await response[responseProperty]; // extract property
-                if (rawData) { // if property was found
-                    setStudentsByIndustryData(rawData.studentsByIndustry);
-                } else {
-                    throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
-                }
-            } catch (error) {
-                console.error(error); // raise error explaining inability to connect to the endpoint 
+            const response = await khobleAPI.get("/dashboard/student/by-industry"); // make API call
+            const responseProperty = "data" // specify the property of the response we want to extract
+            const rawData = await response[responseProperty]; // extract property
+            if (rawData) { // if property was found
+                setStudentsByIndustryData(rawData.studentsByIndustry);
+            } else {
+                throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
             }
         };
 
         const fetchStudentsUserTableData = async () => {
-            try {
-                const response = await khobleAPI.get("/dashboard/student"); // make API call
-                const responseProperty = "data" // specify the property of the response we want to extract
-                const rawData = await response[responseProperty]; // extract property
-                if (rawData) { // if property was found
-                    var columns: any = []; // auxiliary array to save the student table columns
-                    var rows: any = []; // auxiliary array to save the student table rows
-                    rawData.students.map((student: any, userIndex: any) => { // for every student
-                        let shouldSaveColumns = userIndex===0 // flag to save the columns only on first iteration
-                        let rowObject: any = {"id": userIndex} // auxiliary object build based on the current student's props
-                        for(const propName in student){ // for every student property
-                            if (shouldSaveColumns) columns.push({"field": propName, "flex": 1}) // store columns if userIndex is 0
-                            rowObject = {...rowObject, [propName]: student[propName]} // add the prop-value pair
-                        }
-                        if (shouldSaveColumns) setStudentsTableColumns(columns) // save columns
-                        rows.push(rowObject) // store row object
-                    })
-                    setStudentsTableRows(rows) // save rows
-                } else {
-                    throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
-                }
-            } catch (error) {
-                console.error(error); // raise error explaining inability to connect to the endpoint 
+            const response = await khobleAPI.get("/dashboard/student"); // make API call
+            const responseProperty = "data" // specify the property of the response we want to extract
+            const rawData = await response[responseProperty]; // extract property
+            if (rawData) { // if property was found
+                var columns: any = []; // auxiliary array to save the student table columns
+                var rows: any = []; // auxiliary array to save the student table rows
+                rawData.students.map((student: any, userIndex: any) => { // for every student
+                    let shouldSaveColumns = userIndex === 0 // flag to save the columns only on first iteration
+                    let rowObject: any = { "id": userIndex } // auxiliary object build based on the current student's props
+                    for (const propName in student) { // for every student property
+                        if (shouldSaveColumns) columns.push({ "field": propName, "flex": 1 }) // store columns if userIndex is 0
+                        rowObject = { ...rowObject, [propName]: student[propName] } // add the prop-value pair
+                    }
+                    if (shouldSaveColumns) setStudentsTableColumns(columns) // save columns
+                    rows.push(rowObject) // store row object
+                })
+                setStudentsTableRows(rows) // save rows
+            } else {
+                throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
             }
         };
 
@@ -388,8 +377,9 @@ export default function Students({ language }: any) {
                     fetchStudentsByIndustry(),
                     fetchStudentsUserTableData()
                 ]);
-            } catch (error) {
+            } catch (error: any) {
                 console.error(error); // handle error
+                if (error.response.data.msg === "Token no valido") handleExpiredSession()
             } finally {
                 setIsLoading(false);
             }

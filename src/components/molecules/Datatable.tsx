@@ -21,7 +21,7 @@ export default function Datatable({ rows, columns, hiddenColumns }: any) {
         }}
         sx={{
           "&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {
-            outline: "none",
+            outline: "none", // remove outline on click
           },
         }}
         columns={columns}

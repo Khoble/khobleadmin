@@ -12,7 +12,21 @@ import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import { useState } from 'react';
 import convertToRGBA from '../../utils/functions/convertToRGBA';
 
-export default function KPICard({ language, size, chartType, data, title, color, xDataKey, yDataKeys, metric, metricDescription, trendChangePercent, fixed, componentColors }: any) {
+export default function KPICard({ 
+    language, 
+    size='l', 
+    chartType="bar", 
+    data, 
+    title, 
+    color="#FFFFFF", 
+    xDataKey, 
+    yDataKeys, 
+    metric, 
+    metricDescription, 
+    trendChangePercent, 
+    fixed=false, 
+    componentColors 
+}: any) {
     // Functions:
     // Returns expand icon depending on card size:
     function getExpandIcon() {
