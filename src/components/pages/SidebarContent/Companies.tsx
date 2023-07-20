@@ -580,9 +580,9 @@ export default function Companies({ language }: any) {
         minWidth: "50%",
         bgcolor: 'background.paper',
         // border: `2px solid ${primaryColor}`,
-        boxShadow: `0px 0px 53px -7px rgba(${primaryColor === "white"? "255,255,255" : "0,0,0"},0.63)`,
-        webkitBoxShadow: `0px 0px 53px -7px rgba(${primaryColor === "white"? "255,255,255" : "0,0,0"},0.63)`,
-        mozBoxShadow: `0px 0px 53px 7px -rgba(${primaryColor === "white"? "255,255,255" : "0,0,0"},0.63)`,
+        boxShadow: `0px 0px 53px -7px rgba(${primaryColor === "white" ? "255,255,255" : "0,0,0"},0.63)`,
+        webkitBoxShadow: `0px 0px 53px -7px rgba(${primaryColor === "white" ? "255,255,255" : "0,0,0"},0.63)`,
+        mozBoxShadow: `0px 0px 53px 7px -rgba(${primaryColor === "white" ? "255,255,255" : "0,0,0"},0.63)`,
         p: 4,
         borderRadius: "10px"
     };
@@ -721,93 +721,118 @@ export default function Companies({ language }: any) {
     return (
         <Grid
             container
-            spacing={2}
+            direction="column"
+            justifyContent="flex-start"
+            width="100vw"
+            // border="3px solid magenta"
         >
-            <Grid item>
-                <KPICard
-                    language={language}
-                    size={'m'}
-                    chartType={"line"}
-                    data={companiesOverTimeData}
-                    color={colors.turquoise}
-                    xDataKey={timestampKeyName}
-                    yDataKeys={["companies"]}
-                    metric={getLatestValue(companiesOverTimeData, "companies")}
-                    metricDescription={
-                        language === "english" ?
-                            "current users" :
-                            language === "español" ?
-                                "usuarios actuales" :
-                                ""
-                    }
-                    trendChangePercent={0}
+            <Grid
+                item
+                width="100%"
+                // border="4px solid black"
+            >
+                <Grid
+                    container
+                    direction="row"
+                    justifyContent="flex-start"
+                    alignItems="flex-start"
+                    padding={1}
+                    spacing={1}
+                >
+                    <Grid item>
+                        <KPICard
+                            language={language}
+                            size={'m'}
+                            chartType={"line"}
+                            data={companiesOverTimeData}
+                            color={colors.turquoise}
+                            xDataKey={timestampKeyName}
+                            yDataKeys={["companies"]}
+                            metric={getLatestValue(companiesOverTimeData, "companies")}
+                            metricDescription={
+                                language === "english" ?
+                                    "current users" :
+                                    language === "español" ?
+                                        "usuarios actuales" :
+                                        ""
+                            }
+                            trendChangePercent={0}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <KPICard
+                            language={language}
+                            size={'l'}
+                            chartType={"bar"}
+                            data={companiesUnderIndustryData}
+                            color={colors.orange}
+                            xDataKey={"industry"}
+                            yDataKeys={["companies"]}
+                            title={
+                                language === "english" ?
+                                    "Companies by Industry (Fake Data)" :
+                                    language === "español" ?
+                                        "Compañías por industria (datos falsos)" :
+                                        ""
+                            }
+                            trendChangePercent={2.4}
+                            fixed
+                        />
+                    </Grid>
+                    <Grid item>
+                        <KPICard
+                            language={language}
+                            size={'l'}
+                            chartType={"bar"}
+                            data={postingsByIndustryData}
+                            color={colors.yellow}
+                            xDataKey={"industry"}
+                            yDataKeys={["total_publications"]}
+                            title={
+                                language === "english" ?
+                                    "Job Postings by Industry" :
+                                    language === "español" ?
+                                        "Publicaciones de trabajo por industria" :
+                                        ""
+                            }
+                            trendChangePercent={-4}
+                            fixed
+                        />
+                    </Grid>
+                    <Grid item>
+                        <KPICard
+                            language={language}
+                            size={'s'}
+                            chartType={"line"}
+                            data={postingsOverTimeData}
+                            color={colors.green}
+                            xDataKey={timestampKeyName}
+                            yDataKeys={["total_publications"]}
+                            metric={getLatestValue(postingsOverTimeData, "total_publications")}
+                            trendChangePercent={''}
+                            metricDescription={
+                                language === "english" ?
+                                    "current publications" :
+                                    language === "español" ?
+                                        "publicaciones actuales" :
+                                        ""
+                            }
+                        />
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid
+                item
+                padding={1}
+                width="100%"
+                // border="4px solid black"
+            >
+                <Datatable
+                    columns={companiesUserTableColumns}
+                    rows={companiesUserTableRows}
+                    hiddenColumns={["_id"]}
                 />
             </Grid>
-            <Grid item>
-                <KPICard
-                    language={language}
-                    size={'l'}
-                    chartType={"bar"}
-                    data={companiesUnderIndustryData}
-                    color={colors.orange}
-                    xDataKey={"industry"}
-                    yDataKeys={["companies"]}
-                    title={
-                        language === "english" ?
-                            "Companies by Industry (Fake Data)" :
-                            language === "español" ?
-                                "Compañías por industria (datos falsos)" :
-                                ""
-                    }
-                    trendChangePercent={2.4}
-                    fixed
-                />
-            </Grid>
-            <Grid item>
-                <KPICard
-                    language={language}
-                    size={'l'}
-                    chartType={"bar"}
-                    data={postingsByIndustryData}
-                    color={colors.yellow}
-                    xDataKey={"industry"}
-                    yDataKeys={["total_publications"]}
-                    title={
-                        language === "english" ?
-                            "Job Postings by Industry" :
-                            language === "español" ?
-                                "Publicaciones de trabajo por industria" :
-                                ""
-                    }
-                    trendChangePercent={-4}
-                    fixed
-                />
-            </Grid>
-            <Grid item>
-                <KPICard
-                    language={language}
-                    size={'s'}
-                    chartType={"line"}
-                    data={postingsOverTimeData}
-                    color={colors.green}
-                    xDataKey={timestampKeyName}
-                    yDataKeys={["total_publications"]}
-                    metric={getLatestValue(postingsOverTimeData, "total_publications")}
-                    trendChangePercent={''}
-                    metricDescription={
-                        language === "english" ?
-                            "current publications" :
-                            language === "español" ?
-                                "publicaciones actuales" :
-                                ""
-                    }
-                />
-            </Grid>
-            <Datatable
-                columns={companiesUserTableColumns}
-                rows={companiesUserTableRows}
-                hiddenColumns={["_id"]}
-            />
             <Modal
                 open={isModalOpen}
                 onClose={handleModalToggle}

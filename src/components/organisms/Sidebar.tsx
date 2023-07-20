@@ -1,4 +1,4 @@
-import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -55,7 +55,7 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-export default function Sidebar({ language, renderedContent }: any) {
+export default function Sidebar({ language }: any) {
     // Hooks:
     const navigate = useNavigate(); // used for page navigation
     const theme = useTheme(); // the global theme
@@ -64,6 +64,8 @@ export default function Sidebar({ language, renderedContent }: any) {
     const [appbarTitle, setAppbarTitle] = useState("")
 
     // Constants and variables:
+    // Colors:
+    const backgroundColor = theme.palette.mode === "dark"? "#121212" : "white" // choose sidebar background color depending on theme
     const sidebarConfig = [
         {
             icon: DataUsageIcon,
@@ -202,6 +204,7 @@ export default function Sidebar({ language, renderedContent }: any) {
             <AppBar
                 position="fixed"
                 open={drawerIsOpen}
+                sx={{backgroundColor: backgroundColor}}
             >
                 <Toolbar>
                     <IconButton
@@ -214,7 +217,9 @@ export default function Sidebar({ language, renderedContent }: any) {
                             ...(drawerIsOpen && { display: 'none' }),
                         }}
                     >
-                        <MenuIcon />
+                        <MenuIcon 
+                            {...(theme.palette.mode === "light" && {sx: {color: "rgba(0,0,0,0.54)"}})}
+                        />
                     </IconButton>
                     <Typography
                         variant="h6"
@@ -236,6 +241,7 @@ export default function Sidebar({ language, renderedContent }: any) {
                     '& .MuiDrawer-paper': {
                         width: drawerWidth,
                         boxSizing: 'border-box',
+                        backgroundColor: backgroundColor,
                     },
                 }}
             >
@@ -247,13 +253,7 @@ export default function Sidebar({ language, renderedContent }: any) {
                 <Divider />
                 {drawerContent}
             </Drawer>
-            <Box
-                component="main"
-                sx={{ flexGrow: 1, p: 3 }}
-            >
-                <DrawerHeader />
-                {renderedContent}
-            </Box>
+            <DrawerHeader /> {/* necessary to display content under app bar */}
         </Box>
     );
 }

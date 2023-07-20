@@ -10,10 +10,11 @@ import Students from './../components/pages/SidebarContent/Students';
 import Login from './../components/pages/Login';
 import ProtectedRoute from './ProtectedRoute';
 
-// Determines global theme: 
+// Determines global theme:
+const prefersDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches; // browser's theme
 const theme = createTheme({
   palette: {
-    mode: "dark" // possible to toggle between 'dark' and 'light' themes
+    mode: prefersDarkMode ? "dark" : "light"
   }
 });
 
@@ -22,11 +23,6 @@ const language = "english"; // todo: api call
 
 // Default route that sidebar will render: 
 const defaultRoute = "/general";
-
-// Returns a siderbar component from a child, which is the component that corresponds to its main view
-function getSidebarComponent(child: any) {
-  return <Sidebar language={language} renderedContent={child} />;
-}
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -37,19 +33,22 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           <Route path='/' element={<Navigate replace to={defaultRoute} />} />
           <Route path={defaultRoute} element={
             <ProtectedRoute>
-              {getSidebarComponent(<General language={language} />)}
+              <Sidebar language={language}/>
+              <General language={language} />
             </ProtectedRoute>
           }
           />
           <Route path='/companies' element={
             <ProtectedRoute>
-              {getSidebarComponent(<Companies language={language} />)}
+              <Sidebar language={language}/>
+              <Companies language={language} />
             </ProtectedRoute>
           }
           />
           <Route path='/students' element={
             <ProtectedRoute>
-              {getSidebarComponent(<Students language={language} />)}
+              <Sidebar language={language}/>
+              <Students language={language} />
             </ProtectedRoute>
           }
           />
