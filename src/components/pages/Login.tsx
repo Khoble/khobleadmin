@@ -1,10 +1,8 @@
-import { Card, CardHeader, CardContent, Grid, Box, TextField, IconButton, InputAdornment } from "@mui/material";
-import { makeStyles } from '@mui/styles'
+import { Card, CardContent, Grid, Box, TextField, IconButton, InputAdornment } from "@mui/material";
 import KhobleTextField from "../atoms/KhobleTextField";
 import { useEffect, useState } from "react";
 import EnterIcon from '@mui/icons-material/ArrowCircleRightOutlined';
 import { useNavigate } from 'react-router-dom';
-import KhobleLogoComponent from "../atoms/KhobleLogo"
 import { useTheme } from '@mui/material/styles';
 import KhobleLogoGradient from "../../../public/khoble_logo_darkmode_gradient.svg"
 import KhobleLogo from "../../../public/khoble_magenta_blue_separate_paths.svg"

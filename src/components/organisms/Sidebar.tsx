@@ -14,7 +14,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DataUsageIcon from '@mui/icons-material/DataUsage';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -61,7 +61,7 @@ export default function Sidebar({ language }: any) {
     const theme = useTheme(); // the global theme
     const { pathname } = useLocation(); // used to get current page
     const [drawerIsOpen, setDrawerIsOpen] = useState(false) // used to manage the opening/closing of the drawer
-    const [appbarTitle, setAppbarTitle] = useState("")
+    const appbarTitle = useRef(null) // reference to the appbar title (useRef prevents re-render infinite loop)
 
     // Constants and variables:
     // Colors:
@@ -105,8 +105,13 @@ export default function Sidebar({ language }: any) {
     // Functions:
     // Used to highlight sidebar tab that corresponds to the current view:
     function shouldSelect(currentSidebarTab: any) {
-        var tabUrl = '/' + currentSidebarTab.navigateTo; // add slash at the beginning of 'tabUrl'
-        return tabUrl === pathname // where 'pathname' is the current browser url
+        let tabUrl = '/' + currentSidebarTab.navigateTo; // add slash at the beginning of 'tabUrl'
+
+        if (tabUrl === pathname /* where 'pathname' is the current browser url */){
+            appbarTitle.current = currentSidebarTab.drawerLabel // set appbar title to the selected tab label
+            return true
+        }
+        return false
     }
 
     // Logs user out:
@@ -213,7 +218,7 @@ export default function Sidebar({ language }: any) {
                         onClick={toggleDrawer(true)}
                         edge="start"
                         sx={{
-                            marginRight: 5,
+                            marginRight: 1,
                             ...(drawerIsOpen && { display: 'none' }),
                         }}
                     >
@@ -227,7 +232,7 @@ export default function Sidebar({ language }: any) {
                         component="div"
                     // sx={{ flexGrow: 1 }}
                     >
-                        {/* {getAppbarTitle} */}
+                        {appbarTitle.current}
                     </Typography>
                 </Toolbar>
             </AppBar>
