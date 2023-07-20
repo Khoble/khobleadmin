@@ -230,7 +230,7 @@ export default function Sidebar({ language }: any) {
                         variant="h6"
                         noWrap
                         component="div"
-                    // sx={{ flexGrow: 1 }}
+                        color="initial"
                     >
                         {appbarTitle.current}
                     </Typography>
