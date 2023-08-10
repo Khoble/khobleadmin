@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
-    // "composite": true,
-    "composite": false, // in order to import "globalVariables" to vite.config.ts
+    "composite": true,
     "module": "ESNext",
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true
