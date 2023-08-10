@@ -66,6 +66,9 @@ export default function Sidebar({ language }: any) {
     // Constants and variables:
     // Colors:
     const backgroundColor = theme.palette.mode === "dark"? "#121212" : "white" // choose sidebar background color depending on theme
+    const generalGrayColor = "rgba(0,0,0,0.54)"
+
+    // Sidebar configuration
     const sidebarConfig = [
         {
             icon: DataUsageIcon,
@@ -223,14 +226,14 @@ export default function Sidebar({ language }: any) {
                         }}
                     >
                         <MenuIcon 
-                            {...(theme.palette.mode === "light" && {sx: {color: "rgba(0,0,0,0.54)"}})}
+                            {...(theme.palette.mode === "light" && {sx: {color: generalGrayColor}})}
                         />
                     </IconButton>
                     <Typography
                         variant="h6"
                         noWrap
                         component="div"
-                        color="initial"
+                        color={theme.palette.mode === "dark"? "white" : generalGrayColor}
                     >
                         {appbarTitle.current}
                     </Typography>

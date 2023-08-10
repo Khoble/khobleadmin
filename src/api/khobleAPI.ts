@@ -16,4 +16,17 @@ const khobleAPI = axios.create({
   },
 });
 
+khobleAPI.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.code.includes('ERR_NETWORK', 'ECONNABORTED')) {
+      alert('Hubo un error, por favor intente de nuevo');
+    } else if (error.response.status === 401) { /* Redirect to login if session has expired: */
+      localStorage.removeItem('session');
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default khobleAPI;

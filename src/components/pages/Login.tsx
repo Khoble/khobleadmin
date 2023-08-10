@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import EnterIcon from '@mui/icons-material/ArrowCircleRightOutlined';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
-import KhobleLogoGradient from "../../../public/khoble_logo_darkmode_gradient.svg"
-import KhobleLogo from "../../../public/khoble_magenta_blue_separate_paths.svg"
+import KhobleLogoGradient from "../../SVGs/khoble_logo_darkmode_gradient.svg"
+import KhobleLogo from "../../SVGs/khoble_magenta_blue_separate_paths.svg"
 import khobleAPI from "../../api/khobleAPI";
 import convertToRGBA from "../../utils/functions/convertToRGBA";
 

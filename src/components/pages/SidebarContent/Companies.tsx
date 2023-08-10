@@ -4,7 +4,6 @@ import { Avatar, AvatarGroup, Box, Button, Grid, Modal } from '@mui/material';
 import khobleAPI from "../../../api/khobleAPI";
 import Datatable from "../../molecules/Datatable";
 import getLatestValue from "../../../utils/functions/getLatestValue";
-import handleExpiredSession from "../../../utils/handleExpiredSession";
 import { useTheme } from '@mui/material/styles';
 
 const colors = {
@@ -606,12 +605,12 @@ export default function Companies({ language }: any) {
     // API calls:
     useEffect(() => {
         const fetchCompaniesOverTime = async () => {
-            const response = await khobleAPI.get("/dashboard/company/registered-in-time"); // make API call
-            const rawData = await response.data; // extract data
-            if (rawData) { // if property was found
+            try {
+                const response = await khobleAPI.get("/dashboard/company/registered-in-time"); // make API call
+                const rawData = await response.data; // extract data
                 setCompaniesOverTimeData(rawData.companiesRegisteredInTime);
-            } else {
-                throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
+            } catch (error) {
+                console.error(error)
             }
         };
 
@@ -631,30 +630,30 @@ export default function Companies({ language }: any) {
         // };
 
         const fetchPostingsByIndustry = async () => {
-            const response = await khobleAPI.get("/dashboard/company/publications-by-industries"); // make API call
-            const rawData = await response.data; // extract data
-            if (rawData) { // if property was found
+            try {
+                const response = await khobleAPI.get("/dashboard/company/publications-by-industries"); // make API call
+                const rawData = await response.data; // extract data
                 setPostingsByIndustryData(rawData.publicationsByIndustry);
-            } else {
-                throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
+            } catch (error) {
+                console.error(error)
             }
         };
 
         const fetchPostingsOverTime = async () => {
-            const response = await khobleAPI.get("/dashboard/company/publications-in-time"); // make API call
-            const rawData = await response.data; // extract data
-            if (rawData) { // if property was found
+            try {
+                const response = await khobleAPI.get("/dashboard/company/publications-in-time"); // make API call
+                const rawData = await response.data; // extract data
                 setPostingsOverTimeData(rawData.publicationsInTime);
-            } else {
-                throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
+            } catch (error) {
+                console.error(error)
             }
         };
 
         const fetchCompaniesUserTable = async () => {
-            const response = await khobleAPI.get("/dashboard/company"); // make API call
-            const responseProperty = "data" // specify the property of the response we want to extract
-            const rawData = await response[responseProperty]; // extract property
-            if (rawData) { // if property was found
+            try {
+                const response = await khobleAPI.get("/dashboard/company"); // make API call
+                const responseProperty = "data" // specify the property of the response we want to extract
+                const rawData = await response[responseProperty]; // extract property
                 var columns: any = []; // auxiliary array to save the companies table columns
                 var rows: any = []; // auxiliary array to save the student table rows
                 rawData.companies.map((company: any, userIndex: any) => { // for every student
@@ -685,8 +684,8 @@ export default function Companies({ language }: any) {
                     rows.push(rowObject) // store row object
                 })
                 setCompaniesUserTableRows(rows) // save rows
-            } else {
-                throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+            } catch (error) {
+                console.error(error)
             }
         };
 
@@ -701,9 +700,8 @@ export default function Companies({ language }: any) {
                     fetchPostingsOverTime(),
                     fetchCompaniesUserTable()
                 ]);
-            } catch (error: any) {
-                console.error(error); // handle error
-                if (error.response.data.msg === "Token no valido") handleExpiredSession()
+            } catch (error) {
+                console.error(error);
             } finally {
                 setIsLoading(false);
             }
@@ -724,12 +722,12 @@ export default function Companies({ language }: any) {
             direction="column"
             justifyContent="flex-start"
             width="100vw"
-            // border="3px solid magenta"
+        // border="3px solid magenta"
         >
             <Grid
                 item
                 width="100%"
-                // border="4px solid black"
+            // border="4px solid black"
             >
                 <Grid
                     container
@@ -825,7 +823,7 @@ export default function Companies({ language }: any) {
                 item
                 padding={1}
                 width="100%"
-                // border="4px solid black"
+            // border="4px solid black"
             >
                 <Datatable
                     columns={companiesUserTableColumns}

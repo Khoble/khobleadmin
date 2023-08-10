@@ -1,7 +1,6 @@
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import '../../src/styles/index.css'
 import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom'
 import Sidebar from './../components/organisms/Sidebar';
 import General from './../components/pages/SidebarContent/General';
@@ -9,6 +8,7 @@ import Companies from './../components/pages/SidebarContent/Companies';
 import Students from './../components/pages/SidebarContent/Students';
 import Login from './../components/pages/Login';
 import ProtectedRoute from './ProtectedRoute';
+import routesBasename from '../globalVariables/routesBasename';
 
 // Determines global theme:
 const prefersDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches; // browser's theme
@@ -27,7 +27,7 @@ const defaultRoute = "/general";
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <BrowserRouter basename={'/khobleadmin'}>
+      <BrowserRouter basename={`/${routesBasename}`}>
         <Routes>
           <Route path='/login' element={<Login language={language} />} />
           <Route path='/' element={<Navigate replace to={defaultRoute} />} />

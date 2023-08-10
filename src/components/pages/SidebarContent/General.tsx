@@ -3,8 +3,6 @@ import KPICard from "../../organisms/KPICard";
 import { Grid } from '@mui/material';
 import khobleAPI from "../../../api/khobleAPI";
 import getLatestValue from "../../../utils/functions/getLatestValue";
-import complementizeArray from "../../../utils/functions/complementizeArray";
-import handleExpiredSession from "../../../utils/handleExpiredSession";
 
 const colors = {
     red: "#d88484",
@@ -115,9 +113,9 @@ export default function General({ language }: any) {
     useEffect(() => {
         // // Fetch all data:
         const fetchAllData = async () => {
-            const response = await khobleAPI.get("/dashboard/general"); // make API call
-            const rawData = await response.data; // extract data
-            if (rawData) { // if property was found
+            try {
+                const response = await khobleAPI.get("/dashboard/general"); // make API call
+                const rawData = await response.data; // extract data
                 // Handle hired data:
                 setHiredData(rawData.proposals);
 
@@ -134,8 +132,8 @@ export default function General({ language }: any) {
                         }
                     ]
                 );
-            } else {
-                throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
+            } catch (error) {
+                console.error(error);
             }
         };
 
@@ -144,9 +142,8 @@ export default function General({ language }: any) {
             setIsLoading(true);
             try {
                 await Promise.all([fetchAllData()]); // ensures all the calls are finished before proceeding
-            } catch (error: any) {
-                console.error(error); // handle error
-                if (error.response.data.msg === "Token no valido") handleExpiredSession()
+            } catch (error) {
+                console.error(error);
             } finally {
                 setIsLoading(false);
             }

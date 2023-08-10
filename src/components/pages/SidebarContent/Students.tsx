@@ -4,8 +4,6 @@ import { Grid } from '@mui/material';
 import khobleAPI from "../../../api/khobleAPI";
 import Datatable from "../../molecules/Datatable";
 import getLatestValue from "../../../utils/functions/getLatestValue";
-import getSumOfValues from "../../../utils/functions/getSumOfValues";
-import handleExpiredSession from "../../../utils/handleExpiredSession";
 
 const colors = {
     red: "#d88484",
@@ -324,32 +322,32 @@ export default function Students({ language }: any) {
     // API calls:
     useEffect(() => {
         const fetchStudentsOverTime = async () => {
-            const response = await khobleAPI.get("/dashboard/student/registered-in-time"); // make API call
-            const rawData = await response.data; // extract data
-            if (rawData) { // if property was found
+            try {
+                const response = await khobleAPI.get("/dashboard/student/registered-in-time"); // make API call
+                const rawData = await response.data; // extract data
                 let myData = rawData.studentsRegisteredInTime;
                 setStudentsOverTime(myData);
-            } else {
-                throw new Error(`Response has no property 'data'`); // raise error explaining property couldn't be found
+            } catch (error) {
+                console.error(error)
             }
         };
 
         const fetchStudentsByIndustry = async () => {
-            const response = await khobleAPI.get("/dashboard/student/by-industry"); // make API call
-            const responseProperty = "data" // specify the property of the response we want to extract
-            const rawData = await response[responseProperty]; // extract property
-            if (rawData) { // if property was found
+            try {
+                const response = await khobleAPI.get("/dashboard/student/by-industry"); // make API call
+                const responseProperty = "data" // specify the property of the response we want to extract
+                const rawData = await response[responseProperty]; // extract property
                 setStudentsByIndustryData(rawData.studentsByIndustry);
-            } else {
-                throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+            } catch (error) {
+                console.error(error)
             }
         };
 
         const fetchStudentsUserTableData = async () => {
-            const response = await khobleAPI.get("/dashboard/student"); // make API call
-            const responseProperty = "data" // specify the property of the response we want to extract
-            const rawData = await response[responseProperty]; // extract property
-            if (rawData) { // if property was found
+            try {
+                const response = await khobleAPI.get("/dashboard/student"); // make API call
+                const responseProperty = "data" // specify the property of the response we want to extract
+                const rawData = await response[responseProperty]; // extract property
                 var columns: any = []; // auxiliary array to save the student table columns
                 var rows: any = []; // auxiliary array to save the student table rows
                 rawData.students.map((student: any, userIndex: any) => { // for every student
@@ -363,8 +361,8 @@ export default function Students({ language }: any) {
                     rows.push(rowObject) // store row object
                 })
                 setStudentsTableRows(rows) // save rows
-            } else {
-                throw new Error(`Response has no property '${responseProperty}'`); // raise error explaining property couldn't be found
+            } catch (error) {
+                console.log(error)
             }
         };
 
@@ -378,8 +376,7 @@ export default function Students({ language }: any) {
                     fetchStudentsUserTableData()
                 ]);
             } catch (error: any) {
-                console.error(error); // handle error
-                if (error.response.data.msg === "Token no valido") handleExpiredSession()
+                console.error(error);
             } finally {
                 setIsLoading(false);
             }
