@@ -28,7 +28,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline/>
-      <BrowserRouter basename={"/khobleadmin"}>
+      <BrowserRouter>
         <Routes>
           <Route path='/login' element={<Login language={language} />} />
           <Route path='/' element={<Navigate replace to={defaultRoute} />} />
